@@ -1,0 +1,16 @@
+{
+  "name": "imgcook-dsl-template",
+  "devDependencies": {
+    "co": "4.x.x",
+    "prettier": "^1.11.1",
+    "thunkify": "2.x.x",
+    "vm2": "^3.5.2",
+    "xml-beautifier": "0.x.x",
+    "xtemplate": "4.x.x",
+    "xtpl": "3.x.x",
+    "lodash": ">=4.17.11"
+  },
+  "scripts": {
+    "test": "node ./test/index.js"
+  }
+}
