@@ -4,6 +4,7 @@
     "@imgcook/dsl-helper": "^0.0.1-alpha.0",
     "co": "^4.6.0",
     "lodash": "^4.17.11",
+    "mocha": "^6.1.4",
     "prettier": "^1.11.1",
     "thunkify": "^2.1.2",
     "vm2": "^3.8.0",
@@ -13,6 +14,6 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "node ./test/index.js"
+    "test": "mocha test/__test__.js"
   }
 }
