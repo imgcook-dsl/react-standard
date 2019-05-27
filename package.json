@@ -3,6 +3,7 @@
   "devDependencies": {
     "@imgcook/dsl-helper": "^0.0.1-alpha.0",
     "co": "^4.6.0",
+    "fs-extra": "^8.0.1",
     "lodash": "^4.17.11",
     "mocha": "^6.1.4",
     "prettier": "^1.11.1",

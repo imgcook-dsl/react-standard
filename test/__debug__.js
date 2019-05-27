@@ -10,26 +10,31 @@ const dslHelper = require('@imgcook/dsl-helper');
 
 const data = require('./data.js');
 
-const vm = new NodeVM({
-  console: 'inherit',
-  sandbox: {}
-});
+// const vm = new NodeVM({
+//   console: 'inherit',
+//   sandbox: {}
+// });
 
 // var assert = require('assert');
-describe('Generate', function() {
-  describe('#generateCode()', function() {
-    it('should generate code to write to file', function() {
+// describe('Generate', function() {
+//   describe('#generateCode()', function() {
+//     it('should generate code to write to file', function() {
       co(function*() {
         const xtplRender = thunkify(xtpl.render);
-        const code = fs.readFileSync(
-          path.resolve(__dirname, '../src/index.js'),
-          'utf8'
-        );
-        const renderInfo = vm.run(code)(data, {
-          prettier: prettier,
+        // const code = fs.readFileSync(
+        //   path.resolve(__dirname, '../src/index.js'),
+        //   'utf8'
+        // );
+        const renderInfo = require('../src/index.js')(data, {
+          prettier,
           helper: dslHelper,
-          _: _
+          _,
         });
+        // const renderInfo = vm.run(code)(data, {
+        //   prettier: prettier,
+        //   helper: dslHelper,
+        //   _: _
+        // });
         const renderData = renderInfo.renderData;
         const ret = yield xtplRender(
           path.resolve(__dirname, '../src/template.xtpl'),
@@ -54,6 +59,6 @@ describe('Generate', function() {
           })()
         );
       });
-    });
-  });
-});
+//     });
+//   });
+// });

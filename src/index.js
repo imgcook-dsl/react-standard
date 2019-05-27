@@ -1,15 +1,9 @@
 module.exports = function(layoutData, opts) {
   let renderData = {};
-  // const prettier = opts.prettier;
   const _ = opts._;
-  // const style = {};
   const helper = opts.helper;
-
-  // const _isArray = helper.utils.isArray;
   const _line = helper.utils.line;
-  // const _string = helper.utils.string;
   const _indentTab = helper.utils.indentTab;
-  // const _setIndentTab = helper.utils.setIndentTab;
 
   // 样式过滤
   if (helper.clearInheritedAttr) {
@@ -1490,19 +1484,6 @@ module.exports = function(layoutData, opts) {
 
   // 代码生成
   let dslMessage = genertePartJson(layoutData);
-
-  // fileFlowOptions: fileFlowOptions,
-  // xmlPartsJson: xmlPartsJson,
-  // stylePartsJson: stylePartsJson,
-
-  // let xmlString = helper.printer(dslMessage.xmlPartsJson);
-  // let styleString = helper.printer(dslMessage.stylePartsJson);
-  // console.log( xmlString );
-  // console.log( styleString );
-  // for( let _o in dslMessage.fileFlowOptions.codeSelfFunction ) {
-  //   console.log( dslMessage.fileFlowOptions.codeSelfFunction[_o] );
-  //   console.log( helper.printer( _concat(dslMessage.fileFlowOptions.codeSelfFunction[_o]) ) );
-  // }
 
   // OPEN CODE // 作为API部分对外开发
   let openCode = {
