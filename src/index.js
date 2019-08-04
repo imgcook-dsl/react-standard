@@ -1158,8 +1158,12 @@ module.exports = function(layoutData, opts) {
             if (typeof classValue == 'number') {
               classValue = classValue + 'px';
             } else if (typeof classValue == 'string') {
-              classValue = classValue.replace(/(px)|(rem)/, '');
-              classValue = classValue + 'px';
+              if ( ['auto', 'inherit', 'initial', 'unset' ].includes(cssValue) ) {
+                classValue = classValue;
+              } else {
+                classValue = classValue.replace(/(px)|(rem)/, '');
+                classValue = classValue + 'px'; 
+              }
             }
             break;
           default:
