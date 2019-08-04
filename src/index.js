@@ -1127,7 +1127,7 @@ module.exports = function(layoutData, opts) {
         styleRemCssPartsJson: remResult
       };
       function valueTranslate(classKey, classValue) {
-        if ( !(typeof cssValue === 'string' && ['auto', 'inherit', 'initial', 'unset' ].includes(cssValue)) ) {
+        if ( !(typeof classValue === 'string' && ['auto', 'inherit', 'initial', 'unset' ].includes(classValue)) ) {
           switch (classKey) {
             case 'fontSize':
             case 'marginLeft':
@@ -1309,7 +1309,7 @@ module.exports = function(layoutData, opts) {
         let _w = modConfig.designWidth / 100;
         let _h = modConfig.designHeight / 100;
 
-        if ( !(typeof cssValue === 'string' && ['auto', 'inherit', 'initial', 'unset' ].includes(cssValue)) ) {
+        if ( !(typeof classValue === 'string' && ['auto', 'inherit', 'initial', 'unset' ].includes(classValue)) ) {
           if (typeof classValue === 'string') {
             classValue = classValue.replace(/(px)|(rem)/, '');
           }
