@@ -1127,47 +1127,45 @@ module.exports = function(layoutData, opts) {
         styleRemCssPartsJson: remResult
       };
       function valueTranslate(classKey, classValue) {
-        switch (classKey) {
-          case 'fontSize':
-          case 'marginLeft':
-          case 'marginTop':
-          case 'marginRight':
-          case 'marginBottom':
-          case 'paddingLeft':
-          case 'paddingTop':
-          case 'paddingRight':
-          case 'paddingBottom':
-          case 'width':
-          case 'height':
-          case 'borderRadius':
-          case 'top':
-          case 'left':
-          case 'right':
-          case 'bottom':
-          case 'lineHeight':
-          case 'max-width':
-          case 'border-width':
-          case 'border-top-width':
-          case 'border-right-width':
-          case 'border-bottom-width':
-          case 'border-left-width':
-          case 'borderBottomRightRadius':
-          case 'borderBottomLeftRadius':
-          case 'borderTopRightRadius':
-          case 'borderTopLeftRadius':
-            if (typeof classValue == 'number') {
-              classValue = classValue + 'px';
-            } else if (typeof classValue == 'string') {
-              if ( ['auto', 'inherit', 'initial', 'unset' ].includes(cssValue) ) {
-                classValue = classValue;
-              } else {
+        if ( !(typeof cssValue === 'string' && ['auto', 'inherit', 'initial', 'unset' ].includes(cssValue)) ) {
+          switch (classKey) {
+            case 'fontSize':
+            case 'marginLeft':
+            case 'marginTop':
+            case 'marginRight':
+            case 'marginBottom':
+            case 'paddingLeft':
+            case 'paddingTop':
+            case 'paddingRight':
+            case 'paddingBottom':
+            case 'width':
+            case 'height':
+            case 'borderRadius':
+            case 'top':
+            case 'left':
+            case 'right':
+            case 'bottom':
+            case 'lineHeight':
+            case 'max-width':
+            case 'border-width':
+            case 'border-top-width':
+            case 'border-right-width':
+            case 'border-bottom-width':
+            case 'border-left-width':
+            case 'borderBottomRightRadius':
+            case 'borderBottomLeftRadius':
+            case 'borderTopRightRadius':
+            case 'borderTopLeftRadius':
+              if (typeof classValue == 'number') {
+                classValue = classValue + 'px';
+              } else if (typeof classValue == 'string') {
                 classValue = classValue.replace(/(px)|(rem)/, '');
                 classValue = classValue + 'px'; 
               }
-            }
-            break;
-          default:
-            break;
+              break;
+            default:
+              break;
+          }
         }
         return classValue;
       }
@@ -1311,55 +1309,56 @@ module.exports = function(layoutData, opts) {
         let _w = modConfig.designWidth / 100;
         let _h = modConfig.designHeight / 100;
 
-        if (typeof classValue === 'string') {
-          classValue = classValue.replace(/(px)|(rem)/, '');
-        }
-
-        switch (classKey) {
-          case 'marginTop':
-          case 'marginBottom':
-          case 'paddingTop':
-          case 'paddingBottom':
-          case 'height':
-          case 'top':
-          case 'bottom':
-          // classValue = Number((classValue / _h).toFixed(2)) + 'vh';
-          case 'borderWidth':
-          case 'borderTopWidth':
-          case 'borderRightWidth':
-          case 'borderBottomWidth':
-          case 'borderLeftWidth':
-          case 'borderBottomRightRadius':
-          case 'borderBottomLeftRadius':
-          case 'borderTopRightRadius':
-          case 'borderTopLeftRadius':
-          case 'borderRadius':
-          case 'fontSize':
-            if (typeof classValue == 'number') {
-              classValue = classValue + 'px';
-            } else if (typeof classValue == 'string') {
-              classValue = classValue.replace(/(px)|(rem)/, '');
-              classValue = classValue + 'px';
-            }
-            break;
-          case 'width':
-          case 'maxWidth':
-          case 'left':
-          case 'right':
-          case 'paddingRight':
-          case 'paddingLeft':
-          case 'marginLeft':
-          case 'marginRight':
-            classValue = Number((classValue / _w).toFixed(2)) + 'vw';
-            break;
-          case 'lineHeight':
-            if (typeof classValue === 'string') {
-              classValue = classValue.replace(/(px)|(rem)/, '');
-            }
+        if ( !(typeof cssValue === 'string' && ['auto', 'inherit', 'initial', 'unset' ].includes(cssValue)) ) {
+          if (typeof classValue === 'string') {
+            classValue = classValue.replace(/(px)|(rem)/, '');
+          }
+          switch (classKey) {
+            case 'marginTop':
+            case 'marginBottom':
+            case 'paddingTop':
+            case 'paddingBottom':
+            case 'height':
+            case 'top':
+            case 'bottom':
             // classValue = Number((classValue / _h).toFixed(2)) + 'vh';
-            break;
-          default:
-            break;
+            case 'borderWidth':
+            case 'borderTopWidth':
+            case 'borderRightWidth':
+            case 'borderBottomWidth':
+            case 'borderLeftWidth':
+            case 'borderBottomRightRadius':
+            case 'borderBottomLeftRadius':
+            case 'borderTopRightRadius':
+            case 'borderTopLeftRadius':
+            case 'borderRadius':
+            case 'fontSize':
+              if (typeof classValue == 'number') {
+                classValue = classValue + 'px';
+              } else if (typeof classValue == 'string') {
+                classValue = classValue.replace(/(px)|(rem)/, '');
+                classValue = classValue + 'px';
+              }
+              break;
+            case 'width':
+            case 'maxWidth':
+            case 'left':
+            case 'right':
+            case 'paddingRight':
+            case 'paddingLeft':
+            case 'marginLeft':
+            case 'marginRight':
+              classValue = Number((classValue / _w).toFixed(2)) + 'vw';
+              break;
+            case 'lineHeight':
+              if (typeof classValue === 'string') {
+                classValue = classValue.replace(/(px)|(rem)/, '');
+              }
+              // classValue = Number((classValue / _h).toFixed(2)) + 'vh';
+              break;
+            default:
+              break;
+          }
         }
         return classValue;
       }
