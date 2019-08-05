@@ -1509,7 +1509,7 @@ module.exports = function(layoutData, opts) {
   // IMPORT
   let _rImport = [
     _line("import React, { Component } from 'react';", { indent: { tab: 0 } }),
-    _line("import 'style.css'", { indent: { tab: 0 } }),
+    _line("import './style.css'", { indent: { tab: 0 } }),
     _line("", { indent: { tab: 0 } })
   ];
   if (dslMessage.fileFlowOptions.needImportPicture) {
