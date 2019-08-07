@@ -1508,7 +1508,9 @@ module.exports = function(layoutData, opts) {
   let _rStrict = [_line("'use strict';", { indent: { tab: 0 } })];
   // IMPORT
   let _rImport = [
-    _line("import React, { Component } from 'react';", { indent: { tab: 0 } })
+    _line("import React, { Component } from 'react';", { indent: { tab: 0 } }),
+    _line("import './style.css'", { indent: { tab: 0 } }),
+    _line("", { indent: { tab: 0 } })
   ];
   if (dslMessage.fileFlowOptions.needImportPicture) {
     openCode.info.needImportPicture = true; // FOR OPEN API
@@ -1543,7 +1545,7 @@ module.exports = function(layoutData, opts) {
     })
   );
   let _rModClassClass = [].concat(
-    _line('class DvcComponent extends React.Component {', {
+    _line('class DvcComponent extends Component {', {
       indent: { tab: 0 }
     })
   );
@@ -1630,21 +1632,9 @@ module.exports = function(layoutData, opts) {
       : [];
   // EXPORT
   let _rExport =
-    mockProps.length > 0
-      ? [].concat(
-          _line(`ReactDOM.render(<DvcComponent`, { indent: { tab: 0 } }),
-          ...mockProps.map(v => {
-            return _line(`${v}={mockData.${v}}`, { indent: { tab: 1 } });
-          }),
-          _line(`/>, document.getElementById('container'));`, {
-            indent: { tab: 0 }
-          })
-        )
-      : [].concat(
-          _line(
-            "ReactDOM.render(<DvcComponent />, document.getElementById('container'));",
-            { indent: { tab: 1 } }
-          )
+    [].concat(
+      _line("", { indent: { tab: 0 } }),
+      _line("export default DvcComponent;", { indent: { tab: 0 } })
         );
 
   renderData = {
@@ -1687,6 +1677,7 @@ module.exports = function(layoutData, opts) {
   // renderData.css = openCode.styleCss;
   // renderData.style = openCode.styleJs;
   let indexJs = helper.printer([
+    ..._rImport,
     ..._rModClassClass,
     ..._rMockData,
     ..._rExport
