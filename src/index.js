@@ -1,3 +1,78 @@
+/**
+ * dsl配置
+ */
+const COMPONENT_NAME_MAP = {
+  view: 'div',
+  text: 'span',
+  picture: 'img',
+  link: 'a',
+  video: 'video',
+  expview: 'div',
+  scroller: 'div'
+};
+const EVENT_MAP = {
+  init: 'componentWillMount',
+  destroy: 'componentWillUnmount'
+};
+const DATABINDING_STYLE_MAP = {
+  'style.width': 'styleLevel',
+  'style.height': 'styleLevel',
+  'style.backgroundColor': 'styleLevel',
+  'style.color': 'styleLevel',
+  'style.borderRadius': 'styleLevel',
+  'style.borderWidth': 'styleLevel',
+  'style.borderStyle': 'styleLevel',
+  'style.opacity': 'styleLevel'
+};
+const DATABINDING_MAP = {
+  view: {
+    show: 'domLevel',
+    ...DATABINDING_STYLE_MAP
+  },
+  picture: {
+    show: 'domLevel',
+    resizeMode: 'propsLevel',
+    lazyload: 'propsLevel',
+    placeholder: 'propsLevel',
+    ...DATABINDING_STYLE_MAP,
+    source: 'specialLevel'
+  },
+  scroller: {
+    show: 'domLevel',
+    ...DATABINDING_STYLE_MAP
+  },
+  expview: {
+    show: 'domLevel',
+    ...DATABINDING_STYLE_MAP
+  },
+  text: {
+    show: 'domLevel',
+    ...DATABINDING_STYLE_MAP,
+    'style.fontFamily': 'styleLevel',
+    'style.fontSize': 'styleLevel',
+    'style.fontWeight': 'styleLevel',
+    innerText: 'specialLevel'
+  },
+  link: {
+    show: 'domLevel',
+    ...DATABINDING_STYLE_MAP,
+    'style.fontFamily': 'styleLevel',
+    'style.fontSize': 'styleLevel',
+    'style.fontWeight': 'styleLevel',
+    href: 'propsLevel',
+    innerText: 'specialLevel'
+  },
+  video: {
+    show: 'domLevel',
+    ...DATABINDING_STYLE_MAP,
+    src: 'propsLevel',
+    poster: 'propsLevel',
+    autoPlay: 'propsLevel',
+    controls: 'propsLevel',
+    muted: 'propsLevel'
+  }
+};
+
 module.exports = function(layoutData, opts) {
   let renderData = {};
   const _ = opts._;
@@ -33,81 +108,6 @@ module.exports = function(layoutData, opts) {
   let htmlFontsize = viewportWidth ? viewportWidth / 10 : null;
 
   let scopeClass = layoutData.attrs.className;
-
-  /**
-   * dsl配置
-   */
-  const COMPONENT_NAME_MAP = {
-    view: 'div',
-    text: 'span',
-    picture: 'img',
-    link: 'a',
-    video: 'video',
-    expview: 'div',
-    scroller: 'div'
-  };
-  const EVENT_MAP = {
-    init: 'componentWillMount',
-    destroy: 'componentWillUnmount'
-  };
-  const DATABINDING_STYLE_MAP = {
-    'style.width': 'styleLevel',
-    'style.height': 'styleLevel',
-    'style.backgroundColor': 'styleLevel',
-    'style.color': 'styleLevel',
-    'style.borderRadius': 'styleLevel',
-    'style.borderWidth': 'styleLevel',
-    'style.borderStyle': 'styleLevel',
-    'style.opacity': 'styleLevel'
-  };
-  const DATABINDING_MAP = {
-    view: {
-      show: 'domLevel',
-      ...DATABINDING_STYLE_MAP
-    },
-    picture: {
-      show: 'domLevel',
-      resizeMode: 'propsLevel',
-      lazyload: 'propsLevel',
-      placeholder: 'propsLevel',
-      ...DATABINDING_STYLE_MAP,
-      source: 'specialLevel'
-    },
-    scroller: {
-      show: 'domLevel',
-      ...DATABINDING_STYLE_MAP
-    },
-    expview: {
-      show: 'domLevel',
-      ...DATABINDING_STYLE_MAP
-    },
-    text: {
-      show: 'domLevel',
-      ...DATABINDING_STYLE_MAP,
-      'style.fontFamily': 'styleLevel',
-      'style.fontSize': 'styleLevel',
-      'style.fontWeight': 'styleLevel',
-      innerText: 'specialLevel'
-    },
-    link: {
-      show: 'domLevel',
-      ...DATABINDING_STYLE_MAP,
-      'style.fontFamily': 'styleLevel',
-      'style.fontSize': 'styleLevel',
-      'style.fontWeight': 'styleLevel',
-      href: 'propsLevel',
-      innerText: 'specialLevel'
-    },
-    video: {
-      show: 'domLevel',
-      ...DATABINDING_STYLE_MAP,
-      src: 'propsLevel',
-      poster: 'propsLevel',
-      autoPlay: 'propsLevel',
-      controls: 'propsLevel',
-      muted: 'propsLevel'
-    }
-  };
 
   /**
    * @desc 生成所有文档生成相关的信息
@@ -1686,7 +1686,7 @@ module.exports = function(layoutData, opts) {
   renderData.indexStyleCss = openCode.styleCss;
   renderData.indexStyleJs = openCode.styleJs;
 
-  let result = {
+  const result = {
     renderData: renderData,
     xml: helper.printer(dslMessage.xmlPartsJson),
     style: helper.printer(dslMessage.stylePartsJson),
