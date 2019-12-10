@@ -1,3 +1,13 @@
-{{{indexJs}}}
+'use strict';
 
-{{{indexStyleJs}}}
+import React, { Component } from 'react';
+
+{{{imports}}}
+
+{{{utils}}}
+
+{{{style}}}
+
+{{{classes}}}
+
+{{{exports}}}
