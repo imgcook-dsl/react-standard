@@ -1,5 +1,7 @@
 module.exports = function(schema, option) {
-  const renderData = {};
+  const {prettier} = option;
+
+  console.log()
 
   // imports
   const imports = [];
@@ -102,7 +104,7 @@ module.exports = function(schema, option) {
       }
     } else if (typeof value === 'function') {
       const {params, content} = parseFunction(value);
-      return `{(${params}) => {${content}}}`;
+      return `(${params}) => {${content}}`;
     }
   }
 
@@ -137,7 +139,11 @@ module.exports = function(schema, option) {
     });
 
     // params parse should in string template
-    payload = `${toString(payload).slice(0, -1)} ,body: ${isExpression(params) ? parseProps(params) : toString(params)}}`;
+    if (params) {
+      payload = `${toString(payload).slice(0, -1)} ,body: ${isExpression(params) ? parseProps(params) : toString(params)}}`;
+    } else {
+      payload = toString(payload);
+    }
 
     let result = `{
       ${action}(${parseProps(uri)}, ${toString(payload)})
@@ -206,7 +212,7 @@ module.exports = function(schema, option) {
 
     Object.keys(schema.props).forEach((key) => {
       if (['className', 'style', 'text', 'src'].indexOf(key) === -1) {
-        props += ` ${key}=${parseProps(schema.props[key])}`;
+        props += ` ${key}={${parseProps(schema.props[key])}}`;
       }
     })
 
@@ -300,7 +306,7 @@ module.exports = function(schema, option) {
             const { params, content } = parseFunction(schema.lifeCycles[name]);
 
             if (name === '_constructor') {
-              lifeCycles.push(`constructor(${params}) {super(); ${content} ${init.join('\n')}}`);
+              lifeCycles.push(`constructor(${params}) { ${content} ${init.join('\n')}}`);
             } else {
               lifeCycles.push(`${name}(${params}) {${content}}`);
             }
@@ -330,12 +336,6 @@ module.exports = function(schema, option) {
 
   transform(schema);
 
-  renderData.imports = imports.join('\n');
-  renderData.utils = utils.join('\n');
-  renderData.style = `const styles = ${JSON.stringify(style)}`;
-  renderData.classes = classes.join('\n');
-  renderData.exports = `export default ${schema.componentName}_0;`;
-
   const prettierOpt = {
     parser: 'babel',
     printWidth: 120,
@@ -343,7 +343,24 @@ module.exports = function(schema, option) {
   };
 
   return {
-    renderData: renderData,
-    prettierOpt: prettierOpt
+    panelDisplay: [
+      {
+        panelName: `index.jsx`,
+        panelValue: prettier.format(`
+          ${imports.join('\n')}
+          import styles from './style.js';
+          ${utils.join('\n')}
+          ${classes.join('\n')}
+          export default ${schema.componentName}_0;
+        `, prettierOpt),
+        panelType: 'js',
+      },
+      {
+        panelName: `style.js`,
+        panelValue: prettier.format(`export default ${toString(style)}`, prettierOpt),
+        panelType: 'js'
+      }
+    ],
+    noTemplate: true
   };
 }

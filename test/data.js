@@ -22,8 +22,10 @@ module.exports = {
     "componentName": "Div",
     "props": {
       "onClick": function onClick(e) {
-        console.log(e.event)
-      }
+        window.open(this.item.url, '_blank')
+      },
+      "data-url": "{{this.item.url}}",
+      "key": "{{this.item.index}}"
     },
     "children": [{
       "componentName": "Div",
@@ -136,8 +138,7 @@ module.exports = {
             },
             "src": "https://img.alicdn.com/tfs/TB1mtZRoVT7gK0jSZFpXXaTkpXa-28-36.png",
             "className": "riverdinwei"
-          },
-          "loop": "{{this.state.data}}"
+          }
         }, {
           "componentName": "Text",
           "id": "Text_10_0",
@@ -162,8 +163,7 @@ module.exports = {
             },
             "text": "距离500m",
             "className": "distance"
-          },
-          "loop": [1, 2]
+          }
         }]
       }]
     }, {
@@ -372,7 +372,57 @@ module.exports = {
         "condition": "{{this.isReadCountShow(this.item.readCount)}}"
       }]
     }],
-    "loop": [{
+    "loopArgs": ["item", "index"],
+    "loop": "{{this.state.data}}"
+  }],
+  "fileName": "index",
+  "methods": {
+    "isReadCountShow": function isReadCountShow(readCount) {
+      return readCount > 300;
+    }
+  },
+  "lifeCycles": {
+    "_constructor": function constructor(props, context) {
+      console.log('super props');
+    },
+    "componentDidUpdate": (prevProps, prevState, snapshot) => {
+      
+    }
+  },
+  "dataSource": {
+    "list": [{
+      "id": "fetch_example",
+      "isInit": true,
+      "type": "fetch",
+      "options": {
+        "method": "GET",
+        "uri": "https://jsonplaceholder.typicode.com/todos/1",
+        "headers": {
+          "Content-Type": "json"
+        }
+      },
+      "dataHandler": function dataHandler(data, error) {
+        console.log('fetch example: ', data, error)
+        return data;
+      }
+    }, {
+      "id": "jsonp_example",
+      "isInit": true,
+      "type": "jsonp",
+      "options": {
+        "method": "GET",
+        "params": {},
+        "uri": "https://assets.airbnb.com/frontend/search_results.js",
+        "jsonpCallbackFunction": "search_results"
+      },
+      "dataHandler": function dataHandler(data, error) {
+        console.log('jsonp example: ', data, error)
+        return data;
+      }
+    }]
+  },
+  "state": {
+    "data": [{
       "title": "小户型卫浴怎样才能装得高大上？",
       "coverImage": "https://img.alicdn.com/tfs/TB1Txq6o7T2gK0jSZFkXXcIQFXa-684-684.png",
       "readCount": 200,
@@ -390,70 +440,6 @@ module.exports = {
         "userName": "花花设计工作"
       },
       "url": "https://www.imgcook.com/docs"
-    }],
-    "loopArgs": ["item", "index"]
-  }],
-  "fileName": "index",
-  "methods": {
-    "isReadCountShow": function isReadCountShow(readCount) {
-      
-      return readCount > 300;
-    },
-    "test": () => {
-      console.log(123)
-    }
-  },
-  "lifeCycles": {
-    "_constructor": function constructor(props, context) {
-      console.log('super props');
-    },
-    "componentDidUpdate": (prevProps, prevState, snapshot) => {
-      console.log('aaa')
-    }
-  },
-  "dataSource": {
-    "list": [{
-      "id": "example",
-      "isInit": true,
-      "type": "fetch",
-      "options": {
-        "method": "GET",
-        "params": "{{this.state.params}}",
-        "uri": "{{this.state.api}}",
-        "a": {
-          "c": "d"
-        }
-      },
-      "dataHandler": function dataHandler(data, error) {
-        console.log(1 + 1, data, error)
-        return data;
-      }
-    }, {
-      "id": "example_2",
-      "isInit": "{{this.state.api}}",
-      "type": "jsonp",
-      "options": {
-        "method": "GET",
-        "params": {},
-        "uri": "https://assets.airbnb.com/frontend/search_results.js",
-        "aa": "bb",
-        "jsonpCallbackFunction": "search_results"
-      },
-      "dataHandler": function dataHandler(data, error) {
-        console.log('jsonp', data, error)
-        
-        return data;
-      }
-    }],
-    "dataHandler": function dataHandler(dataMap) {
-      console.log(dataMap, 'dataMap')
-      return dataMap;
-    }
-  },
-  "state": {
-    "ccc": "ddd",
-    "data": [1, 2],
-    "api": "https://jsonplaceholder.typicode.com/todos/1",
-    "params": {"a": "b"}
+    }]
   }
 }

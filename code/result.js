@@ -126,108 +126,80 @@ const styles = {
 };
 
 class Page_0 extends Component {
-  state = { ccc: 'ddd', data: [1, 2], api: 'https://jsonplaceholder.typicode.com/todos/1', params: { a: 'b' } };
+  state = {
+    data: [
+      {
+        title: '小户型卫浴怎样才能装得高大上？',
+        coverImage: 'https://img.alicdn.com/tfs/TB1Txq6o7T2gK0jSZFkXXcIQFXa-684-684.png',
+        readCount: 200,
+        user: { userImage: 'https://img.alicdn.com/tfs/TB1DWe6oYj1gK0jSZFOXXc7GpXa-60-60.png', userName: '时尚家居' },
+        url: 'https://www.imgcook.com'
+      },
+      {
+        title: '拥有超多功能的40平米简约小公寓了解一下',
+        coverImage: 'https://img.alicdn.com/tfs/TB1XRQTo7P2gK0jSZPxXXacQpXa-684-648.png',
+        readCount: 500,
+        user: {
+          userImage: 'https://img.alicdn.com/tfs/TB1DWe6oYj1gK0jSZFOXXc7GpXa-60-60.png',
+          userName: '花花设计工作'
+        },
+        url: 'https://www.imgcook.com/docs'
+      }
+    ]
+  };
   constructor(props, context) {
-    super();
     console.log('super props');
-    this.example();
-    if (this.state.api) {
-      this.example_2();
-    }
-    this.dataHandler();
+    this.fetch_example();
+    this.jsonp_example();
   }
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log('aaa');
-  }
+  componentDidUpdate(prevProps, prevState, snapshot) {}
   isReadCountShow(readCount) {
     return readCount > 300;
   }
-  test() {
-    console.log(123);
-  }
-  example() {
-    fetch(this.state.api, { method: 'GET', a: '{"c":"d"}', body: this.state.params })
+  fetch_example() {
+    fetch('https://jsonplaceholder.typicode.com/todos/1', { method: 'GET', headers: '{"Content-Type":"json"}' })
       .then(response => response.json())
       .then((data, error) => {
-        console.log(1 + 1, data, error);
+        console.log('fetch example: ', data, error);
         return data;
       })
       .catch(e => {
         console.log('error', e);
       });
   }
-  example_2() {
-    jsonp('https://assets.airbnb.com/frontend/search_results.js', {
-      aa: 'bb',
-      jsonpCallbackFunction: 'search_results',
-      body: {}
-    })
+  jsonp_example() {
+    jsonp('https://assets.airbnb.com/frontend/search_results.js', { jsonpCallbackFunction: 'search_results', body: {} })
       .then(response => response.json())
       .then((data, error) => {
-        console.log('jsonp', data, error);
-
+        console.log('jsonp example: ', data, error);
         return data;
       })
       .catch(e => {
         console.log('error', e);
       });
-  }
-  dataHandler(dataMap) {
-    console.log(dataMap, 'dataMap');
-    return dataMap;
   }
   render() {
     return (
       <div style={styles.box}>
-        {[
-          {
-            title: '小户型卫浴怎样才能装得高大上？',
-            coverImage: 'https://img.alicdn.com/tfs/TB1Txq6o7T2gK0jSZFkXXcIQFXa-684-684.png',
-            readCount: 200,
-            user: {
-              userImage: 'https://img.alicdn.com/tfs/TB1DWe6oYj1gK0jSZFOXXc7GpXa-60-60.png',
-              userName: '时尚家居'
-            },
-            url: 'https://www.imgcook.com'
-          },
-          {
-            title: '拥有超多功能的40平米简约小公寓了解一下',
-            coverImage: 'https://img.alicdn.com/tfs/TB1XRQTo7P2gK0jSZPxXXacQpXa-684-648.png',
-            readCount: 500,
-            user: {
-              userImage: 'https://img.alicdn.com/tfs/TB1DWe6oYj1gK0jSZFOXXc7GpXa-60-60.png',
-              userName: '花花设计工作'
-            },
-            url: 'https://www.imgcook.com/docs'
-          }
-        ].map((item, index) => {
+        {this.state.data.map((item, index) => {
           return (
             <div
               key={index}
               onClick={e => {
-                console.log(e.event);
+                window.open(item.url, '_blank');
               }}
+              data-url={item.url}
+              key={item.index}
             >
               <div style={styles.bd}>
                 <img style={styles.layer} src={'https://img.alicdn.com/tfs/TB1bLoWoYH1gK0jSZFwXXc7aXXa-684-684.png'} />
                 <img style={styles.bg} src={item.coverImage} />
                 <div style={styles.wrap}>
-                  {this.state.data.map((item, index) => {
-                    return (
-                      <img
-                        key={index}
-                        style={styles.riverdinwei}
-                        src={'https://img.alicdn.com/tfs/TB1mtZRoVT7gK0jSZFpXXaTkpXa-28-36.png'}
-                      />
-                    );
-                  })}
-                  {[1, 2].map((item, index) => {
-                    return (
-                      <span key={index} style={styles.distance}>
-                        距离500m
-                      </span>
-                    );
-                  })}
+                  <img
+                    style={styles.riverdinwei}
+                    src={'https://img.alicdn.com/tfs/TB1mtZRoVT7gK0jSZFpXXaTkpXa-28-36.png'}
+                  />
+                  <span style={styles.distance}>距离500m</span>
                 </div>
               </div>
               <div style={styles.main}>

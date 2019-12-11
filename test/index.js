@@ -32,19 +32,25 @@ co(function*() {
       }
     }
   });
-  const renderData = renderInfo.renderData;
-  const ret = yield xtplRender(
-    path.resolve(__dirname, '../src/template.xtpl'),
-    renderData,
-    {}
-  );
 
-  const prettierOpt = renderInfo.prettierOpt || {
-    printWidth: 120
-  };
+  if (renderInfo.noTemplate) {
+    renderInfo.panelDisplay.forEach((file) => {
+      fs.writeFileSync(path.join(__dirname, `../code/${file.panelName}`), file.panelValue);
+    });
+  } else {
+    const renderData = renderInfo.renderData;
+    const ret = yield xtplRender(
+      path.resolve(__dirname, '../src/template.xtpl'),
+      renderData,
+      {}
+    );
 
+    const prettierOpt = renderInfo.prettierOpt || {
+      printWidth: 120
+    };
 
-  const prettierRes = prettier.format(ret, prettierOpt);
+    const prettierRes = prettier.format(ret, prettierOpt);
 
-  fs.writeFileSync(path.join(__dirname,'./result.js'), prettierRes);
+    fs.writeFileSync(path.join(__dirname,'../code/result.js'), prettierRes);
+  }
 });

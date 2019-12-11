@@ -15,6 +15,6 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "mocha test/__test__.js"
+    "test": "node test"
   }
 }
