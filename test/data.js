@@ -152,14 +152,12 @@ module.exports = {
           "props": {
             "style": {
               "marginLeft": "4px",
-              "width": "84px",
               "height": "22px",
-              "lineHeight": "22px",
-              "whiteSpace": "nowrap",
-              "color": "#ffffff",
-              "fontSize": "18px",
               "fontWeight": 400,
-              "lines": 1
+              "fontSize": "18px",
+              "color": "#ffffff",
+              "lineHeight": "22px",
+              "whiteSpace": "nowrap"
             },
             "text": "距离500m",
             "className": "distance"
@@ -203,13 +201,12 @@ module.exports = {
             "marginTop": "22px",
             "width": "300px",
             "height": "88px",
-            "overflow": "hidden",
-            "textOverflow": "ellipsis",
-            "lineHeight": "44px",
-            "color": "#333333",
-            "fontSize": "30px",
             "fontWeight": 400,
-            "lines": 2
+            "fontSize": "30px",
+            "color": "#333333",
+            "lineHeight": "44px",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis"
           },
           "className": "title",
           "text": "{{this.item.title}}"
@@ -293,14 +290,12 @@ module.exports = {
           "props": {
             "style": {
               "marginLeft": "6px",
-              "width": "96px",
               "height": "28px",
-              "lineHeight": "28px",
-              "whiteSpace": "nowrap",
-              "color": "#666666",
-              "fontSize": "24px",
               "fontWeight": 300,
-              "lines": 1
+              "fontSize": "24px",
+              "color": "#666666",
+              "lineHeight": "28px",
+              "whiteSpace": "nowrap"
             },
             "className": "fashionHome",
             "text": "{{this.item.user.userName}}"
@@ -356,14 +351,12 @@ module.exports = {
           "props": {
             "style": {
               "marginLeft": "5px",
-              "width": "36px",
               "height": "26px",
-              "lineHeight": "26px",
-              "whiteSpace": "nowrap",
-              "color": "#999999",
-              "fontSize": "22px",
               "fontWeight": 400,
-              "lines": 1
+              "fontSize": "22px",
+              "color": "#999999",
+              "lineHeight": "26px",
+              "whiteSpace": "nowrap"
             },
             "className": "num",
             "text": "{{this.item.readCount}}"
