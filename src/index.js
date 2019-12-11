@@ -347,6 +347,9 @@ module.exports = function(schema, option) {
       {
         panelName: `index.jsx`,
         panelValue: prettier.format(`
+          'use strict';
+
+          import React, { Component } from 'react';
           ${imports.join('\n')}
           import styles from './style.js';
           ${utils.join('\n')}
