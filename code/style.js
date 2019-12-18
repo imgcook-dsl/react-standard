@@ -41,14 +41,12 @@ export default {
   riverdinwei: { opacity: '1.00', width: '1.87vw', height: '2.40vw' },
   distance: {
     marginLeft: '0.53vw',
-    width: '11.20vw',
     height: '2.93vw',
-    lineHeight: '2.93vw',
-    whiteSpace: 'nowrap',
-    color: '#ffffff',
-    fontSize: '2.40vw',
     fontWeight: 400,
-    lines: 1
+    fontSize: '2.40vw',
+    color: '#ffffff',
+    lineHeight: '2.93vw',
+    whiteSpace: 'nowrap'
   },
   main: {
     display: 'flex',
@@ -63,13 +61,12 @@ export default {
     marginTop: '2.93vw',
     width: '40.00vw',
     height: '11.73vw',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    lineHeight: '5.87vw',
-    color: '#333333',
-    fontSize: '4.00vw',
     fontWeight: 400,
-    lines: 2
+    fontSize: '4.00vw',
+    color: '#333333',
+    lineHeight: '5.87vw',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   ft: {
     boxSizing: 'border-box',
@@ -90,26 +87,22 @@ export default {
   xianjin: { width: '4.00vw', height: '4.00vw' },
   fashionHome: {
     marginLeft: '0.80vw',
-    width: '12.80vw',
     height: '3.73vw',
-    lineHeight: '3.73vw',
-    whiteSpace: 'nowrap',
-    color: '#666666',
-    fontSize: '3.20vw',
     fontWeight: 300,
-    lines: 1
+    fontSize: '3.20vw',
+    color: '#666666',
+    lineHeight: '3.73vw',
+    whiteSpace: 'nowrap'
   },
   group: { display: 'flex', alignItems: 'center', flexDirection: 'row', height: '4.00vw' },
   favorite: { width: '2.93vw', height: '2.93vw' },
   num: {
     marginLeft: '0.67vw',
-    width: '4.80vw',
     height: '3.47vw',
-    lineHeight: '3.47vw',
-    whiteSpace: 'nowrap',
-    color: '#999999',
-    fontSize: '2.93vw',
     fontWeight: 400,
-    lines: 1
+    fontSize: '2.93vw',
+    color: '#999999',
+    lineHeight: '3.47vw',
+    whiteSpace: 'nowrap'
   }
 };

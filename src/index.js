@@ -14,7 +14,7 @@ module.exports = function(schema, option) {
   const classes = [];
 
   // 1vw = width / 100
-  const _w = option.responsive.width / 100;
+  const _w = (option.responsive.width / 100) || 750;
 
   const isExpression = (value) => {
     return /^\{\{.*\}\}$/.test(value);

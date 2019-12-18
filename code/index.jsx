@@ -1,3 +1,6 @@
+'use strict';
+
+import React, { Component } from 'react';
 import { fetch } from 'whatwg-fetch';
 import jsonp from 'fetch-jsonp';
 import styles from './style.js';
@@ -27,6 +30,7 @@ class Page_0 extends Component {
     ]
   };
   constructor(props, context) {
+    super();
     console.log('super props');
     this.fetch_example();
     this.jsonp_example();
