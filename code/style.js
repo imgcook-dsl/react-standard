@@ -4,7 +4,7 @@ export default {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'flex-start',
-    height: '71.20vw'
+    height: '534px'
   },
   bd: {
     display: 'flex',
@@ -12,40 +12,33 @@ export default {
     alignItems: 'flex-start',
     flexDirection: 'row',
     opacity: '1.00',
-    width: '45.60vw',
-    height: '45.60vw'
+    width: '342px',
+    height: '342px'
   },
-  layer: {
-    position: 'absolute',
-    top: '0.00vw',
-    left: '0.00vw',
-    width: '45.60vw',
-    height: '45.60vw',
-    overflow: 'hidden'
-  },
-  bg: { position: 'absolute', top: '0.00vw', left: '0.00vw', opacity: '1.00', width: '45.60vw', height: '45.60vw' },
+  layer: { position: 'absolute', top: '0px', left: '0px', width: '342px', height: '342px', overflow: 'hidden' },
+  bg: { position: 'absolute', top: '0px', left: '0px', opacity: '1.00', width: '342px', height: '342px' },
   wrap: {
     boxSizing: 'border-box',
     display: 'flex',
     position: 'relative',
     alignItems: 'center',
     flexDirection: 'row',
-    marginTop: '2.40vw',
-    marginLeft: '2.40vw',
-    borderRadius: '2.00vw',
+    marginTop: '18px',
+    marginLeft: '18px',
+    borderRadius: '15px',
     backgroundColor: 'rgba(0,0,0,0.40)',
-    paddingRight: '1.20vw',
-    paddingLeft: '1.33vw',
-    height: '4.00vw'
+    paddingRight: '9px',
+    paddingLeft: '10px',
+    height: '30px'
   },
-  riverdinwei: { opacity: '1.00', width: '1.87vw', height: '2.40vw' },
+  riverdinwei: { opacity: '1.00', width: '14px', height: '18px' },
   distance: {
-    marginLeft: '0.53vw',
-    height: '2.93vw',
+    marginLeft: '4px',
+    height: '22px',
     fontWeight: 400,
-    fontSize: '2.40vw',
+    fontSize: '18px',
     color: '#ffffff',
-    lineHeight: '2.93vw',
+    lineHeight: '22px',
     whiteSpace: 'nowrap'
   },
   main: {
@@ -54,17 +47,17 @@ export default {
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#ffffff',
-    width: '45.60vw',
-    height: '15.20vw'
+    width: '342px',
+    height: '114px'
   },
   title: {
-    marginTop: '2.93vw',
-    width: '40.00vw',
-    height: '11.73vw',
+    marginTop: '22px',
+    width: '300px',
+    height: '88px',
     fontWeight: 400,
-    fontSize: '4.00vw',
+    fontSize: '30px',
     color: '#333333',
-    lineHeight: '5.87vw',
+    lineHeight: '44px',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
@@ -74,35 +67,35 @@ export default {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderBottomLeftRadius: '1.60vw',
-    borderBottomRightRadius: '1.60vw',
+    borderBottomLeftRadius: '12px',
+    borderBottomRightRadius: '12px',
     backgroundColor: '#ffffff',
-    paddingRight: '2.27vw',
-    paddingLeft: '2.40vw',
-    width: '45.60vw',
-    height: '10.40vw',
+    paddingRight: '17px',
+    paddingLeft: '18px',
+    width: '342px',
+    height: '78px',
     overflow: 'hidden'
   },
-  block: { display: 'flex', alignItems: 'center', flexDirection: 'row', height: '4.00vw' },
-  xianjin: { width: '4.00vw', height: '4.00vw' },
+  block: { display: 'flex', alignItems: 'center', flexDirection: 'row', height: '30px' },
+  xianjin: { width: '30px', height: '30px' },
   fashionHome: {
-    marginLeft: '0.80vw',
-    height: '3.73vw',
+    marginLeft: '6px',
+    height: '28px',
     fontWeight: 300,
-    fontSize: '3.20vw',
+    fontSize: '24px',
     color: '#666666',
-    lineHeight: '3.73vw',
+    lineHeight: '28px',
     whiteSpace: 'nowrap'
   },
-  group: { display: 'flex', alignItems: 'center', flexDirection: 'row', height: '4.00vw' },
-  favorite: { width: '2.93vw', height: '2.93vw' },
+  group: { display: 'flex', alignItems: 'center', flexDirection: 'row', height: '30px' },
+  favorite: { width: '22px', height: '22px' },
   num: {
-    marginLeft: '0.67vw',
-    height: '3.47vw',
+    marginLeft: '5px',
+    height: '26px',
     fontWeight: 400,
-    fontSize: '2.93vw',
+    fontSize: '22px',
     color: '#999999',
-    lineHeight: '3.47vw',
+    lineHeight: '26px',
     whiteSpace: 'nowrap'
   }
 };

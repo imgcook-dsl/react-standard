@@ -41,37 +41,39 @@ module.exports = function(schema, option) {
   };
 
   // convert to responsive unit, such as vw
-  const parseStyle = (style) => {
-    for (let key in style) {
-      switch (key) {
-        case 'fontSize':
-        case 'marginTop':
-        case 'marginBottom':
-        case 'paddingTop':
-        case 'paddingBottom':
-        case 'height':
-        case 'top':
-        case 'bottom':
-        case 'width':
-        case 'maxWidth':
-        case 'left':
-        case 'right':
-        case 'paddingRight':
-        case 'paddingLeft':
-        case 'marginLeft':
-        case 'marginRight':
-        case 'lineHeight':
-        case 'borderBottomRightRadius':
-        case 'borderBottomLeftRadius':
-        case 'borderTopRightRadius':
-        case 'borderTopLeftRadius':
-        case 'borderRadius':
-          style[key] = (parseInt(style[key]) / _w).toFixed(2) + 'vw';
-          break;
+  const parseStyle = (styles) => {
+    for (let style in styles) {
+      for (let key in styles[style]) {
+        switch (key) {
+          case 'fontSize':
+          case 'marginTop':
+          case 'marginBottom':
+          case 'paddingTop':
+          case 'paddingBottom':
+          case 'height':
+          case 'top':
+          case 'bottom':
+          case 'width':
+          case 'maxWidth':
+          case 'left':
+          case 'right':
+          case 'paddingRight':
+          case 'paddingLeft':
+          case 'marginLeft':
+          case 'marginRight':
+          case 'lineHeight':
+          case 'borderBottomRightRadius':
+          case 'borderBottomLeftRadius':
+          case 'borderTopRightRadius':
+          case 'borderTopLeftRadius':
+          case 'borderRadius':
+            styles[style][key] = (parseInt(styles[style][key]) / _w).toFixed(2) + 'vw';
+            break;
+        }
       }
     }
 
-    return style;
+    return styles;
   }
 
   // parse function, return params and content
@@ -204,7 +206,7 @@ module.exports = function(schema, option) {
     const classString = className ? ` style={styles.${className}}` : '';
 
     if (className) {
-      style[className] = parseStyle(schema.props.style);
+      style[className] = schema.props.style;
     }
 
     let xml;
@@ -363,6 +365,11 @@ module.exports = function(schema, option) {
       {
         panelName: `style.js`,
         panelValue: prettier.format(`export default ${toString(style)}`, prettierOpt),
+        panelType: 'js'
+      },
+      {
+        panelName: `style.responsive.js`,
+        panelValue: prettier.format(`export default ${toString(parseStyle(style))}`, prettierOpt),
         panelType: 'js'
       }
     ],
