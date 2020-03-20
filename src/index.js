@@ -40,6 +40,39 @@ module.exports = function(schema, option) {
     return String(value);
   };
 
+  // flexDirection -> flex-direction
+  const parseCamelToLine = (string) => {
+    return string.split(/(?=[A-Z])/).join('-').toLowerCase();
+  }
+
+  // className structure support
+  const generateLess = (schema, style) => {
+    let less = '';
+
+    function walk(json) {
+      if (json.props.className) {
+        let className = json.props.className;
+        less += `.${className} {`;
+
+        for (let key in style[className]) {
+          less += `${parseCamelToLine(key)}: ${style[className][key]};\n`
+        }
+      }
+
+      if (json.children && json.children.length > 0) {
+        json.children.forEach(child => walk(child));
+      }
+
+      if (json.props.className) {
+        less += '}';
+      }
+    }
+
+    walk(schema);
+
+    return less;
+  };
+
   // convert to responsive unit, such as vw
   const parseStyle = (styles) => {
     for (let style in styles) {
@@ -366,6 +399,11 @@ module.exports = function(schema, option) {
         panelName: `style.js`,
         panelValue: prettier.format(`export default ${toString(style)}`, prettierOpt),
         panelType: 'js'
+      },
+      {
+        panelName: `style.less`,
+        panelValue: prettier.format(generateLess(schema, style), { parser: 'less' }),
+        panelType: 'less'
       },
       {
         panelName: `style.responsive.js`,
