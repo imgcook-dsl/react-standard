@@ -50,7 +50,7 @@ module.exports = function(schema, option) {
     let less = '';
 
     function walk(json) {
-      if (json.props.className) {
+      if (json.props && json.props.className) {
         let className = json.props.className;
         less += `.${className} {`;
 
@@ -58,12 +58,11 @@ module.exports = function(schema, option) {
           less += `${parseCamelToLine(key)}: ${style[className][key]};\n`
         }
       }
-
-      if (json.children && json.children.length > 0) {
+      if (json.children && json.children.length > 0 && Array.isArray(json.children)) {
         json.children.forEach(child => walk(child));
       }
 
-      if (json.props.className) {
+      if (json.props && json.props.className) {
         less += '}';
       }
     }
@@ -235,9 +234,8 @@ module.exports = function(schema, option) {
   // generate render xml
   const generateRender = (schema) => {
     const type = schema.componentName.toLowerCase();
-    const className = schema.props && schema.props.className;
+    const className = schema.props && schema.props.className || '';
     const classString = className ? ` style={styles.${className}}` : '';
-
     if (className) {
       style[className] = schema.props.style;
     }
