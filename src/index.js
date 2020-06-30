@@ -1,5 +1,5 @@
 module.exports = function(schema, option) {
-  const {prettier} = option;
+  const {_, prettier} = option;
 
   // imports
   const imports = [];
@@ -72,35 +72,48 @@ module.exports = function(schema, option) {
     return less;
   };
 
+  const generateCss = (style, toVW) => {
+    let css = '';
+    Object.keys(style).map((key) => {
+      css +=`.${key}{${formatStyle(style[key], toVW)}}`
+    });
+    return css;
+  }
+
+  // box relative style
+  const boxStyleList = ['fontSize', 'marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'height', 'top', 'bottom', 'width', 'maxWidth', 'left', 'right', 'paddingRight', 'paddingLeft', 'marginLeft', 'marginRight', 'lineHeight', 'borderBottomRightRadius', 'borderBottomLeftRadius', 'borderTopRightRadius', 'borderTopLeftRadius', 'borderRadius'];
+  // no unit style
+  const noUnitStyles = ['opacity', 'fontWeight'];
+
+  const formatStyle = (style, toVW) => {
+    const styleData = [];
+    for (let key in style) {
+      let value = style[key];
+      if (boxStyleList.indexOf(key) != -1) {
+        if (toVW) {
+          value = (parseInt(value) / _w).toFixed(2);
+          value = value == 0 ? value : value + 'vw';
+        } else {
+          value = (parseInt(value)).toFixed(2);
+          value = value == 0 ? value : value + 'px';
+        }
+        styleData.push(`${_.kebabCase(key)}: ${value}`);
+      } else if (noUnitStyles.indexOf(key) != -1) {
+        styleData.push(`${_.kebabCase(key)}: ${parseFloat(value)}`);
+      } else {
+        styleData.push(`${_.kebabCase(key)}: ${value}`);
+      }
+    }
+    return styleData.join(';');
+  }
+
+
   // convert to responsive unit, such as vw
   const parseStyle = (styles) => {
     for (let style in styles) {
       for (let key in styles[style]) {
-        switch (key) {
-          case 'fontSize':
-          case 'marginTop':
-          case 'marginBottom':
-          case 'paddingTop':
-          case 'paddingBottom':
-          case 'height':
-          case 'top':
-          case 'bottom':
-          case 'width':
-          case 'maxWidth':
-          case 'left':
-          case 'right':
-          case 'paddingRight':
-          case 'paddingLeft':
-          case 'marginLeft':
-          case 'marginRight':
-          case 'lineHeight':
-          case 'borderBottomRightRadius':
-          case 'borderBottomLeftRadius':
-          case 'borderTopRightRadius':
-          case 'borderTopLeftRadius':
-          case 'borderRadius':
-            styles[style][key] = (parseInt(styles[style][key]) / _w).toFixed(2) + 'vw';
-            break;
+        if (boxStyleList.indexOf(key) > 0) {
+          styles[style][key] = (parseInt(styles[style][key]) / _w).toFixed(2) + 'vw';
         }
       }
     }
@@ -235,7 +248,7 @@ module.exports = function(schema, option) {
   const generateRender = (schema) => {
     const type = schema.componentName.toLowerCase();
     const className = schema.props && schema.props.className || '';
-    const classString = className ? ` style={styles.${className}}` : '';
+    const classString = className ? ` className="${className}"` : '';
     if (className) {
       style[className] = schema.props.style;
     }
@@ -386,7 +399,8 @@ module.exports = function(schema, option) {
 
           import React, { Component } from 'react';
           ${imports.join('\n')}
-          import styles from './style.js';
+          import './style.css';
+
           ${utils.join('\n')}
           ${classes.join('\n')}
           export default ${schema.componentName}_0;
@@ -394,19 +408,14 @@ module.exports = function(schema, option) {
         panelType: 'js',
       },
       {
-        panelName: `style.js`,
-        panelValue: prettier.format(`export default ${toString(style)}`, prettierOpt),
-        panelType: 'js'
+        panelName: `style.css`,
+        panelValue: prettier.format(generateCss(style), { parser: 'css' }),
+        panelType: 'css'
       },
       {
-        panelName: `style.less`,
-        panelValue: prettier.format(generateLess(schema, style), { parser: 'less' }),
-        panelType: 'less'
-      },
-      {
-        panelName: `style.responsive.js`,
-        panelValue: prettier.format(`export default ${toString(parseStyle(style))}`, prettierOpt),
-        panelType: 'js'
+        panelName: `style.responsive.css`,
+        panelValue: prettier.format(`${generateCss(style, true)}`, { parser: 'css' }),
+        panelType: 'css'
       }
     ],
     noTemplate: true
