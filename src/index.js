@@ -49,8 +49,6 @@ module.exports = function(schema, option) {
   // 1vw = width / 100
   const _w = (option.responsive.width / 100) || 750;
 
-  const components = [];
-
   const isExpression = (value) => {
     return /^\{\{.*\}\}$/.test(value);
   }
