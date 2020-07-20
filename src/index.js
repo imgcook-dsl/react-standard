@@ -1,8 +1,41 @@
-module.exports = function(schema, option) {
-  const {_, prettier} = option;
+const transComponentsMap = (compsMap = {}) => {
+  if (!compsMap || !Array.isArray(compsMap.list)) {
+    return [];
+  }
+  const list = compsMap.list;
+  return list.reduce((obj, comp) => {
+    const componentName = comp.name;
+    if (!obj[componentName]) {
+      if (comp.dependence) {
+        try {
+          let dependence = typeof comp.dependence === 'string' ? JSON.parse(comp.dependence) : comp.dependence;
+          if (dependence) {
+            comp.packageName = dependence.package;
+            comp.dependence = dependence;
+          }
+          if (!comp.dependenceVersion) {
+            comp.dependenceVersion = '*';
+          }
+          comp.exportName = dependence.export_name;
+          comp.subName = dependence.sub_name;
+          if (/^\d/.test(comp.dependenceVersion)) {
+            comp.dependenceVersion = '^' + comp.dependenceVersion;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      obj[componentName] = comp;
+    }
+    return obj;
+  }, {});
+};
 
+module.exports = function(schema, option) {
+  const { _, prettier } = option;
+  componentsMap = transComponentsMap(option.componentsMap);
   // imports
-  const imports = [];
+  const imports = new Map();
 
   // inline style
   const style = {};
@@ -15,6 +48,8 @@ module.exports = function(schema, option) {
 
   // 1vw = width / 100
   const _w = (option.responsive.width / 100) || 750;
+
+  const components = [];
 
   const isExpression = (value) => {
     return /^\{\{.*\}\}$/.test(value);
@@ -44,6 +79,51 @@ module.exports = function(schema, option) {
   const parseCamelToLine = (string) => {
     return string.split(/(?=[A-Z])/).join('-').toLowerCase();
   }
+
+  const importString = () => {
+    const importStrings = [];
+    const subImports = [];
+    for (const [ packageName, pkgSet ] of imports) {
+      const set1 = new Set(), set2 = new Set();
+      for (const pkg of pkgSet) {
+        let exportName = pkg.exportName;
+        let subName = pkg.subName;
+        let componentName = pkg.name;
+
+        if (pkg.subName) {
+          subImports.push(`const ${componentName} = ${exportName}.${subName};`)
+        }
+        if (!pkg.dependence.destructuring) {
+          set1.add(exportName);
+        } else {
+          set2.add(exportName);
+        }
+      }
+      const set1Str = [ ...set1 ].join(',');
+      let set2Str = [ ...set2 ].join(',');
+      const dot = set1Str && set2Str ? ',' : '';
+      if (set2Str) {
+        set2Str = `{${set2Str}}`;
+      }
+      importStrings.push(`import ${set1Str} ${dot} ${set2Str} from '${packageName}'`);
+    }
+    return importStrings.concat(subImports);
+  }
+
+  const generateImport = (componentName) => {
+    const component = componentsMap[componentName];
+    if (component) {
+      const objSets = imports.get(component.packageName);
+      if (!objSets) {
+        const set = new Set();
+        set.add(component);
+        imports.set(component.packageName, set);
+      } else {
+        objSets.add(component);
+      }
+      return;
+    }
+  };
 
   // className structure support
   const generateLess = (schema, style) => {
@@ -281,6 +361,19 @@ module.exports = function(schema, option) {
           xml = `<div${classString}${props} />`;
         }
         break;
+      default:
+        if (schema.children && schema.children.length) {
+          xml = `<${schema.componentName}${classString}${props}>${transform(schema.children)}</${schema.componentName}>`;
+        } else {
+          xml = `<${schema.componentName}${classString}${props} />`;
+        }
+
+        const importString = generateImport(schema.componentName);
+
+        if (importString) {
+          imports.push(importString);
+        }
+        break;
     }
 
     if (schema.loop) {
@@ -299,12 +392,13 @@ module.exports = function(schema, option) {
   // parse schema
   const transform = (schema) => {
     let result = '';
-
     if (Array.isArray(schema)) {
       schema.forEach((layer) => {
         result += transform(layer);
       });
-    } else {
+    } else if (typeof schema === 'string') {
+      result += schema;
+    } else if (typeof schema === 'object' && typeof schema.componentName === 'string') {
       const type = schema.componentName.toLowerCase();
 
       if (['page', 'block', 'component'].indexOf(type) !== -1) {
@@ -389,7 +483,7 @@ module.exports = function(schema, option) {
     printWidth: 120,
     singleQuote: true
   };
-
+  const importStrings = importString();
   return {
     panelDisplay: [
       {
@@ -398,7 +492,7 @@ module.exports = function(schema, option) {
           'use strict';
 
           import React, { Component } from 'react';
-          ${imports.join('\n')}
+          ${importStrings.join('\n')}
           import './style.css';
 
           ${utils.join('\n')}
