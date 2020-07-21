@@ -96,7 +96,10 @@ module.exports = function(schema, option) {
         let componentName = pkg.name;
 
         if (pkg.subName) {
-          subImports.push(`const ${componentName} = ${exportName}.${subName};`)
+          subImports.push(`const ${componentName} = ${exportName}.${subName};`);
+        }
+        if (componentName !== exportName && !pkg.subName) {
+          exportName = `${exportName} as ${componentName}`;
         }
         if (!pkg.dependence.destructuring) {
           set1.add(exportName);
