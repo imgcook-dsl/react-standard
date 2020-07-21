@@ -1,3 +1,7 @@
+/**
+ * transform the componentsMap to real Map from compsMap.list as array
+ * @param {*} compsMap 
+ */
 const transComponentsMap = (compsMap = {}) => {
   if (!compsMap || !Array.isArray(compsMap.list)) {
     return [];
@@ -34,7 +38,7 @@ const transComponentsMap = (compsMap = {}) => {
 module.exports = function(schema, option) {
   const { _, prettier } = option;
   componentsMap = transComponentsMap(option.componentsMap);
-  // imports
+  // imports, the key is the package name, the value is a set includes the component objects
   const imports = new Map();
 
   // inline style
@@ -78,6 +82,9 @@ module.exports = function(schema, option) {
     return string.split(/(?=[A-Z])/).join('-').toLowerCase();
   }
 
+  /**
+   * constrcut the import string
+   */
   const importString = () => {
     const importStrings = [];
     const subImports = [];
@@ -108,7 +115,16 @@ module.exports = function(schema, option) {
     return importStrings.concat(subImports);
   }
 
+  /**
+   * store the components to the 'imports' map which was used
+   * 
+   * @param {*} componentName component name like 'Button'
+   */
   const generateImport = (componentName) => {
+    // ignore the empty string
+    if (!componentName) {
+      return;
+    }
     const component = componentsMap[componentName];
     if (component) {
       const objSets = imports.get(component.packageName);
