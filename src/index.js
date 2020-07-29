@@ -16,6 +16,8 @@ module.exports = function(schema, option) {
   // 1vw = width / 100
   const _w = (option.responsive.width / 100) || 750;
 
+  let pageLock = false;
+
   const isExpression = (value) => {
     return /^\{\{.*\}\}$/.test(value);
   }
@@ -261,7 +263,6 @@ module.exports = function(schema, option) {
         props += ` ${key}={${parseProps(schema.props[key])}}`;
       }
     })
-
     switch(type) {
       case 'text':
         const innerText = parseProps(schema.props.text, true);
@@ -305,9 +306,22 @@ module.exports = function(schema, option) {
         result += transform(layer);
       });
     } else {
-      const type = schema.componentName.toLowerCase();
-
-      if (['page', 'block', 'component'].indexOf(type) !== -1) {
+      // fix the problem of multiple page tags
+      let type = schema.componentName.toLowerCase();
+      let cycleMark = ['block', 'component'].indexOf(type) !== -1;
+      if (pageLock && cycleMark) {
+        type = 'div';
+        cycleMark = false;
+      }
+      if (type === 'page') {
+        if (!pageLock) {
+          pageLock = true;
+          cycleMark = true;
+        } else {
+          type = 'div';
+        }
+      }
+      if (cycleMark) {
         // 容器组件处理: state/method/dataSource/lifeCycle/render
         const states = [];
         const lifeCycles = [];
