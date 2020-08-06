@@ -53,6 +53,8 @@ module.exports = function(schema, option) {
   // 1vw = width / 100
   const _w = (option.responsive.width / 100) || 750;
 
+  let pageLock = false;
+
   const isExpression = (value) => {
     return /^\{\{.*\}\}$/.test(value);
   }
@@ -354,11 +356,10 @@ module.exports = function(schema, option) {
     let props = '';
 
     Object.keys(schema.props).forEach((key) => {
-      if (['className', 'style', 'text', 'src'].indexOf(key) === -1) {
+      if (['className', 'style', 'text', 'src', 'lines'].indexOf(key) === -1) {
         props += ` ${key}={${parseProps(schema.props[key])}}`;
       }
     })
-
     switch(type) {
       case 'text':
         const innerText = parseProps(schema.props.text, true);
@@ -416,9 +417,22 @@ module.exports = function(schema, option) {
     } else if (typeof schema === 'string') {
       result += schema;
     } else if (typeof schema === 'object' && typeof schema.componentName === 'string') {
-      const type = schema.componentName.toLowerCase();
-
-      if (['page', 'block', 'component'].indexOf(type) !== -1) {
+      // fix the problem of multiple page tags
+      let type = schema.componentName.toLowerCase();
+      let cycleMark = ['block', 'component'].indexOf(type) !== -1;
+      if (pageLock && cycleMark) {
+        type = 'div';
+        cycleMark = false;
+      }
+      if (type === 'page') {
+        if (!pageLock) {
+          pageLock = true;
+          cycleMark = true;
+        } else {
+          type = 'div';
+        }
+      }
+      if (cycleMark) {
         // 容器组件处理: state/method/dataSource/lifeCycle/render
         const states = [];
         const lifeCycles = [];
