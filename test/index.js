@@ -7,6 +7,7 @@ const prettier = require('prettier');
 const { NodeVM } = require('vm2');
 const _ = require('lodash');
 const data = require('./data');
+const componentsMap = require('./components-map.json');
 
 const vm = new NodeVM({
   console: 'inherit',
@@ -30,7 +31,8 @@ co(function*() {
       print: function(value) {
         console.log(value);
       }
-    }
+    },
+    componentsMap
   });
 
   if (renderInfo.noTemplate) {
