@@ -400,7 +400,7 @@ module.exports = function(schema, option) {
     if (schema.condition) {
       xml = parseCondition(schema.condition, xml);
     }
-    if (schema.loop || schema.condition) {
+    if ((schema.loop || schema.condition )&& !schema.isRoot) {
       xml = `{${xml}}`;
     }
 
@@ -505,6 +505,8 @@ module.exports = function(schema, option) {
       utils.push(`const ${name} = ${option.utils[name]}`);
     });
   }
+
+  schema.isRoot = true
 
   // start parse schema
   transform(schema);
