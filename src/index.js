@@ -40,6 +40,7 @@ module.exports = function(schema, option) {
   componentsMap = transComponentsMap(option.componentsMap);
   // imports, the key is the package name, the value is a set includes the component objects
   const imports = new Map();
+  const importsExt = [];
 
   // inline style
   const style = {};
@@ -262,8 +263,8 @@ module.exports = function(schema, option) {
 
     switch (action) {
       case 'fetch':
-        if (imports.indexOf(`import {fetch} from whatwg-fetch`) === -1) {
-          imports.push(`import {fetch} from 'whatwg-fetch'`);
+        if (importsExt.indexOf(`import {fetch} from whatwg-fetch`) === -1) {
+          importsExt.push(`import {fetch} from 'whatwg-fetch'`);
         }
         payload = {
           method: method
@@ -271,8 +272,8 @@ module.exports = function(schema, option) {
 
         break;
       case 'jsonp':
-        if (imports.indexOf(`import {fetchJsonp} from fetch-jsonp`) === -1) {
-          imports.push(`import jsonp from 'fetch-jsonp'`);
+        if (importsExt.indexOf(`import {fetchJsonp} from fetch-jsonp`) === -1) {
+          importsExt.push(`import jsonp from 'fetch-jsonp'`);
         }
         break;
     }
@@ -516,7 +517,8 @@ module.exports = function(schema, option) {
     printWidth: 120,
     singleQuote: true
   };
-  const importStrings = importString();
+  let importStrings = importString();
+  importStrings = importStrings.concat(importsExt);
   return {
     panelDisplay: [
       {
