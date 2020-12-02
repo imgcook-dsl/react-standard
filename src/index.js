@@ -251,6 +251,8 @@ module.exports = function(schema, option) {
     } else if (typeof value === 'function') {
       const {params, content} = parseFunction(value);
       return `(${params}) => {${content}}`;
+    } else {
+      return JSON.stringify(value);
     }
   }
 
