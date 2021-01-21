@@ -1,4 +1,4 @@
-简体中文 | [English](https://github.com/imgcook-dsl/rax-hook-classname/blob/master/README.md)
+简体中文 | [English](https://github.com/imgcook-dsl/react-standard/blob/master/README.md)
 
 ## 概述
 
