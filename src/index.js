@@ -246,7 +246,7 @@ module.exports = function(schema, option) {
       if (isReactNode) {
         return value;
       } else {
-        return `'${value}'`;
+        return `"${value}"`;
       }
     } else if (typeof value === 'function') {
       const {params, content} = parseFunction(value);
@@ -521,6 +521,7 @@ module.exports = function(schema, option) {
   };
   let importStrings = importString();
   importStrings = importStrings.concat(importsExt);
+
   return {
     panelDisplay: [
       {
