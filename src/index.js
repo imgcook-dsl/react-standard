@@ -553,8 +553,14 @@ module.exports = function(schema, option) {
 
   schema.isRoot = true
 
+  const prettierCssOpt = {
+    parser: 'css'
+  }
+
   // start parse schema
   transform(schema);
+  const animationKeyframes =  addAnimation(schema);
+  console.log('animation-------', animationKeyframes);
 
   const prettierOpt = {
     parser: 'babel',
@@ -583,12 +589,12 @@ module.exports = function(schema, option) {
       },
       {
         panelName: `style.css`,
-        panelValue: prettier.format(generateCss(style), { parser: 'css' }),
+        panelValue: prettier.format(generateCss(style), { parser: 'css' }) + animationKeyframes,
         panelType: 'css'
       },
       {
         panelName: `style.responsive.css`,
-        panelValue: prettier.format(`${generateCss(style, true)}`, { parser: 'css' }),
+        panelValue: prettier.format(`${generateCss(style, true)}`, { parser: 'css' }) + animationKeyframes,
         panelType: 'css'
       }
     ],
