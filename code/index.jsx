@@ -1,116 +1,196 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { fetch } from 'whatwg-fetch';
-import jsonp from 'fetch-jsonp';
-import styles from './style.js';
+
+import './style.css';
+
 const print = function(value) {
   console.log(value);
 };
-class Page_0 extends Component {
-  state = {
-    data: [
-      {
-        title: '小户型卫浴怎样才能装得高大上？',
-        coverImage: 'https://img.alicdn.com/tfs/TB1Txq6o7T2gK0jSZFkXXcIQFXa-684-684.png',
-        readCount: 200,
-        user: { userImage: 'https://img.alicdn.com/tfs/TB1DWe6oYj1gK0jSZFOXXc7GpXa-60-60.png', userName: '时尚家居' },
-        url: 'https://www.imgcook.com'
-      },
-      {
-        title: '拥有超多功能的40平米简约小公寓了解一下',
-        coverImage: 'https://img.alicdn.com/tfs/TB1XRQTo7P2gK0jSZPxXXacQpXa-684-648.png',
-        readCount: 500,
-        user: {
-          userImage: 'https://img.alicdn.com/tfs/TB1DWe6oYj1gK0jSZFOXXc7GpXa-60-60.png',
-          userName: '花花设计工作'
-        },
-        url: 'https://www.imgcook.com/docs'
-      }
-    ]
-  };
-  constructor(props, context) {
-    super();
-    console.log('super props');
-    this.fetch_example();
-    this.jsonp_example();
-  }
-  componentDidUpdate(prevProps, prevState, snapshot) {}
-  isReadCountShow(readCount) {
-    return readCount > 300;
-  }
-  fetch_example() {
-    fetch('https://jsonplaceholder.typicode.com/todos/1', { method: 'GET', headers: '{"Content-Type":"json"}' })
-      .then(response => response.json())
-      .then((data, error) => {
-        console.log('fetch example: ', data, error);
-        return data;
-      })
-      .catch(e => {
-        console.log('error', e);
-      });
-  }
-  jsonp_example() {
-    jsonp('https://assets.airbnb.com/frontend/search_results.js', { jsonpCallbackFunction: 'search_results', body: {} })
-      .then(response => response.json())
-      .then((data, error) => {
-        console.log('jsonp example: ', data, error);
-        return data;
-      })
-      .catch(e => {
-        console.log('error', e);
-      });
-  }
+class Block_0 extends Component {
   render() {
     return (
-      <div style={styles.box}>
-        {this.state.data.map((item, index) => {
-          return (
-            <div
-              key={index}
-              onClick={e => {
-                window.open(item.url, '_blank');
-              }}
-              data-url={item.url}
-              key={item.index}
-            >
-              <div style={styles.bd}>
-                <img style={styles.layer} src={'https://img.alicdn.com/tfs/TB1bLoWoYH1gK0jSZFwXXc7aXXa-684-684.png'} />
-                <img style={styles.bg} src={item.coverImage} />
-                <div style={styles.wrap}>
-                  <img
-                    style={styles.riverdinwei}
-                    src={'https://img.alicdn.com/tfs/TB1mtZRoVT7gK0jSZFpXXaTkpXa-28-36.png'}
-                  />
-                  <span style={styles.distance}>距离500m</span>
-                </div>
-              </div>
-              <div style={styles.main}>
-                <span style={styles.title}>{item.title}</span>
-              </div>
-              <div style={styles.ft}>
-                <div style={styles.block}>
-                  <img
-                    style={styles.xianjin}
-                    src={'https://img.alicdn.com/tfs/TB1OvsYoW61gK0jSZFlXXXDKFXa-60-60.png'}
-                  />
-                  <span style={styles.fashionHome}>{item.user.userName}</span>
-                </div>
-                {this.isReadCountShow(item.readCount) && (
-                  <div style={styles.group}>
-                    <img
-                      style={styles.favorite}
-                      src={'https://img.alicdn.com/tfs/TB1arwYo7T2gK0jSZFkXXcIQFXa-46-44.png'}
-                    />
-                    <span style={styles.num}>{item.readCount}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="mod">
+        <View className="primary">
+          <Picture
+            className="entry-pic"
+            source={{
+              uri: 'https://img.alicdn.com/imgextra/i1/O1CN01iA6RUt1giCHh4uLfX_!!6000000004175-2-tps-810-620.png'
+            }}
+            autoScaling={false}
+            autoWebp={false}
+          />
+          <Picture
+            className="action-bg"
+            source={{
+              uri: 'https://img.alicdn.com/imgextra/i4/O1CN01xCglio1fb2Tj4dGI7_!!6000000004024-2-tps-404-152.png'
+            }}
+            autoScaling={false}
+            autoWebp={false}
+          />
+          <Picture
+            className="shop-logo"
+            source={{
+              uri: 'https://img.alicdn.com/imgextra/i2/O1CN01fRLVpN1koqUi7VnM2_!!6000000004731-2-tps-214-104.png'
+            }}
+            autoScaling={false}
+            autoWebp={false}
+          />
+        </View>
+        {true && <View className="empty" />}
+        <Picture
+          className="item-long"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i2/O1CN01IcS9wC1I6azO02qbt_!!6000000000844-2-tps-396-682.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="product-long"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i4/O1CN01TC595Q1RWXy7mXO57_!!6000000002119-2-tps-368-712.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="item-long-1"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i3/O1CN01sNPqa11h9DeSojhL8_!!6000000004234-2-tps-362-780.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="product-long-1"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i1/O1CN01weu6uV1gD3Lkir9e0_!!6000000004107-2-tps-462-814.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="item-long-2"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i4/O1CN01F3CHMW1LwkwSVqkE7_!!6000000001364-2-tps-608-838.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="entry-pic-1"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i4/O1CN01kfFLkC1d8yyub56ck_!!6000000003692-2-tps-786-506.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <View className="layer-wrapper">
+          <Picture
+            className="layer"
+            source={{
+              uri: 'https://img.alicdn.com/imgextra/i4/O1CN010qI7m51VXhQsQqmgF_!!6000000002663-2-tps-932-676.png'
+            }}
+            autoScaling={false}
+            autoWebp={false}
+          />
+          <Picture
+            className="vertical-line"
+            source={{
+              uri: 'https://img.alicdn.com/imgextra/i2/O1CN01LMbnMX1p1RrABGVSW_!!6000000005300-2-tps-6-618.png'
+            }}
+            autoScaling={false}
+            autoWebp={false}
+          />
+        </View>
+        <Picture
+          className="bg"
+          source={{ uri: 'https://img.alicdn.com/imgextra/i1/O1CN015WWq7v2AJriRaLXBN_!!6000000008183-2-tps-638-6.png' }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="product-long-2"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i4/O1CN010QBD6u1TUpihL1m7h_!!6000000002386-2-tps-536-756.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <Picture
+          className="background"
+          source={{
+            uri: 'https://img.alicdn.com/imgextra/i3/O1CN01BlvkK31GB3c9nECsj_!!6000000000583-2-tps-934-78.png'
+          }}
+          autoScaling={false}
+          autoWebp={false}
+        />
+        <View className="wrapper">
+          <View className="wrapper-inner">
+            <View className="group">
+              <Picture
+                className="entry-pic-2"
+                source={{
+                  uri: 'https://img.alicdn.com/imgextra/i3/O1CN01ZwPA581LWeMp5HThX_!!6000000001307-2-tps-350-242.png'
+                }}
+                autoScaling={false}
+                autoWebp={false}
+              />
+              <View className="view">
+                <span className="title">剩</span>
+                <span className="num">3</span>
+                <span className="caption">次机会</span>
+              </View>
+              <Picture
+                className="bg-1"
+                source={{
+                  uri: 'https://img.alicdn.com/imgextra/i3/O1CN01X12MfA1etWqs7cVTJ_!!6000000003929-2-tps-734-64.png'
+                }}
+                autoScaling={false}
+                autoWebp={false}
+              />
+            </View>
+          </View>
+          <Picture
+            className="entry-pic-3"
+            source={{
+              uri: 'https://img.alicdn.com/imgextra/i4/O1CN01VJPeDg24GIwJBQY71_!!6000000007363-2-tps-350-242.png'
+            }}
+            autoScaling={false}
+            autoWebp={false}
+          />
+          <View className="wrapper-inner-1">
+            <View className="button-bg-wrapper">
+              <Picture
+                className="button-bg"
+                source={{
+                  uri: 'https://img.alicdn.com/imgextra/i2/O1CN01WFD5Ao1LAfM5bJvDk_!!6000000001259-2-tps-764-148.png'
+                }}
+                autoScaling={false}
+                autoWebp={false}
+              />
+              <Picture
+                className="background-1"
+                source={{
+                  uri: 'https://img.alicdn.com/imgextra/i4/O1CN01AlJf431gFnjCoaXHg_!!6000000004113-2-tps-764-100.png'
+                }}
+                autoScaling={false}
+                autoWebp={false}
+              />
+              <Picture
+                className="large-icon"
+                source={{
+                  uri: 'https://img.alicdn.com/imgextra/i4/O1CN01mlQkrx1XIFIgOoBNq_!!6000000002900-2-tps-160-80.png'
+                }}
+                autoScaling={false}
+                autoWebp={false}
+              />
+            </View>
+          </View>
+        </View>
       </div>
     );
   }
 }
-export default Page_0;
+export default Block_0;

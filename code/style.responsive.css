@@ -1,0 +1,505 @@
+.mod {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 75.33vw;
+  height: 83.07vw;
+  position: relative;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-duration: 1280ms;
+  animation-name: swing;
+}
+.primary {
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-direction: row;
+  justify-content: center;
+  margin-left: 12.53vw;
+  border-top-left-radius: 2.4vw;
+  border-top-right-radius: 2.4vw;
+  background-image: linear-gradient(148deg, #efeded 0%, #b4b4b4 76%);
+  width: 58.4vw;
+  height: 61.47vw;
+}
+.entry-pic {
+  position: absolute;
+  bottom: 1.6vw;
+  left: -1.87vw;
+  width: 54vw;
+  height: 41.33vw;
+}
+.action-bg {
+  position: relative;
+  margin-top: 1.73vw;
+  margin-right: 11.6vw;
+  width: 26.8vw;
+  height: 10.13vw;
+}
+.shop-logo {
+  position: relative;
+  margin-top: 2.67vw;
+  width: 14.13vw;
+  height: 6.93vw;
+}
+.empty {
+  position: absolute;
+  top: 18.67vw;
+  right: 3.73vw;
+  width: 58.27vw;
+  height: 46.27vw;
+  overflow: hidden;
+}
+.item-long {
+  position: absolute;
+  top: 25.87vw;
+  left: 15.07vw;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1280ms;
+  animation-name: swing;
+  width: 26.27vw;
+  height: 45.33vw;
+}
+.product-long {
+  position: absolute;
+  top: 20.93vw;
+  left: 22.93vw;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease;
+  animation-duration: 1280ms;
+  animation-name: swing;
+  width: 24.27vw;
+  height: 47.2vw;
+}
+.item-long-1 {
+  position: absolute;
+  top: 20.53vw;
+  right: 23.07vw;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease;
+  animation-duration: 1280ms;
+  animation-name: swing;
+  width: 23.87vw;
+  height: 51.73vw;
+}
+.product-long-1 {
+  position: absolute;
+  right: 16.27vw;
+  bottom: 8.13vw;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1280ms;
+  animation-name: swing;
+  width: 30.67vw;
+  height: 54.13vw;
+}
+.item-long-2 {
+  position: absolute;
+  right: 7.47vw;
+  bottom: 4.93vw;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease;
+  animation-duration: 1280ms;
+  animation-name: swing;
+  width: 40.27vw;
+  height: 55.6vw;
+}
+.entry-pic-1 {
+  position: absolute;
+  right: 0;
+  bottom: 2.67vw;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 1280ms;
+  animation-name: swing;
+  width: 52.27vw;
+  height: 33.47vw;
+}
+.layer-wrapper {
+  display: flex;
+  position: absolute;
+  top: 18.53vw;
+  right: 2.4vw;
+  align-items: center;
+  flex-direction: row;
+  width: 62.13vw;
+  height: 45.07vw;
+}
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 62.13vw;
+  height: 45.07vw;
+  overflow: hidden;
+}
+.vertical-line {
+  position: absolute;
+  top: 0.13vw;
+  right: -0.27vw;
+  width: 0.4vw;
+  height: 41.2vw;
+}
+.bg {
+  position: absolute;
+  top: 18.4vw;
+  left: 0;
+  width: 42.53vw;
+  height: 0.4vw;
+}
+.product-long-2 {
+  position: absolute;
+  top: 18.53vw;
+  left: 10.8vw;
+  width: 35.73vw;
+  height: 50.4vw;
+  overflow: hidden;
+}
+.background {
+  position: absolute;
+  top: 13.6vw;
+  right: 2.4vw;
+  width: 62.13vw;
+  height: 5.2vw;
+}
+.wrapper {
+  display: flex;
+  position: absolute;
+  right: 1.47vw;
+  bottom: 0;
+  align-items: flex-start;
+  flex-direction: row;
+}
+.wrapper-inner {
+  display: flex;
+  position: relative;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 2.27vw;
+  margin-left: 6.13vw;
+  background-size: contain;
+  background-image: url(https://img.alicdn.com/imgextra/i2/O1CN01ofNLoD1YmIuIHhBl1_!!6000000003101-2-tps-964-380.png);
+  height: 25.33vw;
+}
+.group {
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #141414;
+  width: 64.27vw;
+  height: 23.47vw;
+  overflow: hidden;
+}
+.entry-pic-2 {
+  position: absolute;
+  right: 1.6vw;
+  bottom: 0;
+  width: 23.2vw;
+  height: 15.87vw;
+}
+.view {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.27vw;
+  width: 21.2vw;
+  height: 5.33vw;
+  line-height: 3.47vw;
+  position: absolute;
+  top: 14.67vw;
+  left: 3.87vw;
+  z-index: 10;
+  background-image: url(https://img.alicdn.com/imgextra/i2/O1CN01A6AUU31FroypE1Fw8_!!6000000000541-2-tps-318-80.png);
+  background-size: contain;
+  white-space: nowrap;
+}
+.title {
+  margin-top: -0.27vw;
+  color: #141414;
+  font-family: PingFang SC;
+  font-size: 3.47vw;
+  font-weight: 400;
+}
+.num {
+  margin-top: -0.27vw;
+  color: #141414;
+  font-family: PingFang SC;
+  font-size: 3.47vw;
+  font-weight: 600;
+}
+.caption {
+  margin-top: -0.27vw;
+  color: #141414;
+  font-family: PingFang SC;
+  font-size: 3.47vw;
+  font-weight: 400;
+}
+.bg-1 {
+  position: relative;
+  margin-top: 2.27vw;
+  width: 48.93vw;
+  height: 4.27vw;
+}
+.entry-pic-3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 23.2vw;
+  height: 15.87vw;
+}
+.wrapper-inner-1 {
+  display: flex;
+  position: absolute;
+  top: 12vw;
+  right: 5.2vw;
+  align-items: flex-start;
+  flex-direction: column;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 6.27vw;
+  border-color: rgba(0, 0, 0, 0.34);
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 54vw;
+  height: 12.53vw;
+}
+.button-bg-wrapper {
+  display: flex;
+  position: absolute;
+  top: 1.33vw;
+  align-items: center;
+  align-self: center;
+  flex-direction: row;
+  width: 50.93vw;
+  height: 9.87vw;
+}
+.button-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50.93vw;
+  height: 9.87vw;
+  overflow: hidden;
+}
+.background-1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50.93vw;
+  height: 6.53vw;
+  overflow: hidden;
+}
+.large-icon {
+  position: absolute;
+  top: 2.13vw;
+  right: 20vw;
+  width: 10.53vw;
+  height: 5.07vw;
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
+
+@keyframes swing {
+  
+  20% {
+    
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+  
+  40% {
+    
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+  
+  60% {
+    
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+  
+  80% {
+    
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+  
+  100% {
+    
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+  
+}
