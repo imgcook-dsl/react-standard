@@ -560,7 +560,6 @@ module.exports = function(schema, option) {
   // start parse schema
   transform(schema);
   const animationKeyframes =  addAnimation(schema);
-  console.log('animation-------', animationKeyframes);
 
   const prettierOpt = {
     parser: 'babel',
