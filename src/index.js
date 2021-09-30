@@ -409,6 +409,48 @@ module.exports = function(schema, option) {
 
     return xml;
   }
+  // get all layers information
+  let getAllLayers = function(layers, schema) {
+    if (schema.hasOwnProperty('children')) {
+      for (let i of schema.children) {
+        layers.push(i);
+        getAllLayers(layers, i);
+      }
+    }
+  };
+  // trans animation JS Web Animation Api to css
+  const transAnimation = function(animation) {
+    let keyFrames = ``;
+    for (let i of animation.keyframes) {
+      keyFrames += `
+  ${((i.offset * 10000) / 100.0).toFixed(0) + '%'} {
+    ${i.opacity ? 'opacity: '.concat(i.opacity) + ';' : ''}
+    ${i.transform ? 'transform: '.concat(i.transform) + ';' : ''}
+  }
+  `;
+    }
+    let keyframes = `
+@keyframes ${animation.name} {
+  ${keyFrames}
+}
+`;
+    return keyframes;
+  };
+  // get keyframes from all layers
+  const addAnimation = function (schema) {
+    let animationRes = ``;
+    if (schema.animation) {
+      animationRes += transAnimation(schema.animation);
+    }
+    let layers = [];
+    getAllLayers(layers, schema);
+    for (let i of layers) {
+      if (i.animation) {
+        animationRes += transAnimation(i.animation);
+      }
+    }
+    return animationRes;
+  }
 
   // parse schema
   const transform = (schema) => {
