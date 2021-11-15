@@ -2,20 +2,28 @@
   "name": "react-standard",
   "version": "1.0.0",
   "devDependencies": {
-    "@imgcook/dsl-helper": "^0.0.1-alpha.0",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-stage-0": "^7.0.0",
+    "@imgcook/dsl-helper": "0.0.1-alpha.0",
     "co": "^4.6.0",
     "fs-extra": "^8.0.1",
     "lodash": "^4.17.11",
-    "mocha": "^6.1.4",
     "prettier": "^1.11.1",
     "thunkify": "^2.1.2",
-    "vm2": "^3.8.0",
+    "vm2": "^3.5.2",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
     "xml-beautifier": "^0.4.0",
     "xtemplate": "^4.6.1",
     "xtpl": "^3.4.0"
   },
   "scripts": {
-    "build": "webpack",
-    "test": "node test"
+    "debug": "npx webpack --config webpack.config.js --mode=development",
+    "build": "npx webpack --config webpack.config.js --mode=production",
+    "test": "npm run build && node ./test/index.js",
+    "start": "node ./test/index.js"
+  },
+  "dependencies": {
+    "css": "^3.0.0"
   }
 }

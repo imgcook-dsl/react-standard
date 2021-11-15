@@ -4,3 +4,5 @@ npm-debug.log
 .vscode
 /test/template.*
 codeExample
+demo
+dist/
