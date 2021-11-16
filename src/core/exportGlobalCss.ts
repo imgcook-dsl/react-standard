@@ -9,7 +9,7 @@ export default function exportGlobalCss(schema, option): IPanelDisplay[]  {
   } = option;
 
   // 只有一个模块时，生成到当前模块
-  if (schema.css && dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
+  if (dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
     return [
       {
         panelName: `global.css`,

@@ -18,7 +18,7 @@ import {
   addAnimation,
 } from './utils';
 
-import { CSS_TYPE, prettierJsOpt, prettierCssOpt } from './consts';
+import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt } from './consts';
 
 
 export default function exportMod(schema, option):IPanelDisplay[] {
@@ -46,7 +46,8 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     folderName =  ('pages/' + schema.fileName);
     // filePathName = schema.fileName
   }else{
-    folderName = blocksCount == 1 ? '' : ('components/' + schema.fileName);
+    folderName = blocksCount == 1 && dslConfig.outputStyle !== OUTPUT_TYPE.PROJECT? '' : ('components/' + schema.fileName);
+    console.log('folderName', folderName)
   }
   schema.folderName = folderName;
 
@@ -438,11 +439,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     return result;
   };
 
-  // if( dslConfig.useHooks){
-  //   transformHooks(schema)
-  // }else{
-  //   transformComponent(schema)
-  // }
+
   const transform = dslConfig.useHooks
     ? transformHooks
     : transformComponent;

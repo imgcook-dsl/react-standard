@@ -8,7 +8,7 @@ import {
   getGlobalClassNames,
   genStyleCode,
 } from './utils';
-import { CSS_TYPE, initConfig } from './consts';
+import { CSS_TYPE, COMPONENT_TYPE, OUTPUT_TYPE, initConfig } from './consts';
 
 
 
@@ -32,13 +32,13 @@ module.exports = function(schema, option) {
       globalCss: true,
       cssUnit: 'px',
       inlineStyle: CSS_TYPE.MODULE_CLASS,
-      componentStyle: 'hooks',
+      componentStyle: COMPONENT_TYPE.HOOKS,
       htmlFontSize: 16
     },
     option._.get(schema, 'imgcook.dslConfig')
   );
 
-  dslConfig.useHooks = dslConfig.componentStyle === 'hooks';
+  dslConfig.useHooks = dslConfig.componentStyle ===  COMPONENT_TYPE.HOOKS;
   option.dslConfig = dslConfig;
 
   // 初始化全局参数
@@ -46,7 +46,6 @@ module.exports = function(schema, option) {
 
   // 可选 className name  style
   // inlineStyle = inlineStyle !== 'className';
-
 
 
   const { cssUnit, inlineStyle } = dslConfig
@@ -150,7 +149,7 @@ module.exports = function(schema, option) {
   }
 
 
-  if(dslConfig.outputStyle !== 'component'){
+  if(dslConfig.outputStyle == OUTPUT_TYPE.PROJECT){
     // 依赖 package.json
     const dependencies = {};
     for(let item of panelDisplay){
