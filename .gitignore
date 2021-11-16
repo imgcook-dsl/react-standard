@@ -6,3 +6,5 @@ npm-debug.log
 codeExample
 demo
 dist/
+coverage
+.nyc_output

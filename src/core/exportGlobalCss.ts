@@ -1,14 +1,15 @@
+import { IPanelDisplay } from './interface';
 const { CSS_TYPE, prettierCssOpt } = require('./consts');
 
-function exportGlobalCss(schema, option) {
+export default function exportGlobalCss(schema, option): IPanelDisplay[]  {
   const {
     prettier,
-    imgcookConfig,
+    dslConfig,
     _,
   } = option;
 
   // 只有一个模块时，生成到当前模块
-  if (schema.css && imgcookConfig.globalCss && imgcookConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
+  if (schema.css && dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
     return [
       {
         panelName: `global.css`,
@@ -21,4 +22,3 @@ function exportGlobalCss(schema, option) {
     return [];
   }
 }
-module.exports = exportGlobalCss;

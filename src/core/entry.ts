@@ -1,52 +1,55 @@
-const {
+import { IPanelDisplay, IDslConfig } from './interface';
+import {
   line2Hump,
   transComponentsMap,
   initSchema,
   traverse,
   genStyleClass,
   getGlobalClassNames,
-  parseStyle,
   genStyleCode,
-} = require('./utils');
-const { CSS_TYPE } = require('./consts');
+} from './utils';
+import { CSS_TYPE, initConfig } from './consts';
 
 
 
-const exportBlock = require('./exportBlock');
-const exportPage = require('./exportPage');
-const exportCreateApp = require('./exportCreateApp');
-const exportGlobalCss = require('./exportGlobalCss');
-
+import exportBlock from './exportBlock';
+// const exportPage from './exportPage';
+import exportCreateApp from './exportCreateApp';
+import exportGlobalCss from './exportGlobalCss';
 
 module.exports = function(schema, option) {
   // get blocks json
-  const blocks = [];
-  const scale = 750 / ((option.responsive && option.responsive.width) || 750);
-  const componentsMap = transComponentsMap(option.componentsMap);
-  // console.log('componentsMap', componentsMap);
+  const blocks: any[] = [];
+
   // 参数设置
-  option.scale = scale;
-  option.componentsMap = componentsMap;
+  option.scale = 750 / ((option.responsive && option.responsive.width) || 750);
+  option.componentsMap = transComponentsMap(option.componentsMap);
   option.blockInPage = schema.componentName === 'Page';
   option.pageGlobalCss = schema.css || '';
 
-  const imgcookConfig = Object.assign(
+  const dslConfig = Object.assign(
     {
       globalCss: true,
-      cssUnit: 'rpx',
-      inlineStyle: CSS_TYPE.IMPORT_NAME,
+      cssUnit: 'px',
+      inlineStyle: CSS_TYPE.MODULE_CLASS,
+      componentStyle: 'hooks',
+      htmlFontSize: 16
     },
     option._.get(schema, 'imgcook.dslConfig')
   );
 
+  dslConfig.useHooks = dslConfig.componentStyle === 'hooks';
+  option.dslConfig = dslConfig;
+
+  // 初始化全局参数
+  initConfig(dslConfig);
+
   // 可选 className name  style
   // inlineStyle = inlineStyle !== 'className';
-  imgcookConfig.useHooks = imgcookConfig.componentStyle === 'hooks';
 
-  option.imgcookConfig = imgcookConfig;
-  const { cssUnit, inlineStyle } = imgcookConfig
 
-  console.log('[imgcookConfig]', imgcookConfig)
+
+  const { cssUnit, inlineStyle } = dslConfig
   // clear schema
   initSchema(schema);
 
@@ -78,7 +81,7 @@ module.exports = function(schema, option) {
     if (json.props && json.props.className) {
       json.props.className = genStyleClass(
         json.props.className,
-        imgcookConfig.cssStyle
+        dslConfig.cssStyle
       );
     }
   });
@@ -96,8 +99,8 @@ module.exports = function(schema, option) {
     }else if(inlineStyle === CSS_TYPE.MODULE_STYLE){
       classString = ` style={${genStyleCode('styles', className)}}`;
     }else{
-      let classnames = []
-      let enableGlobalCss = imgcookConfig.globalCss && schema.css
+      let classnames: string[] = []
+      let enableGlobalCss = dslConfig.globalCss && schema.css
    
       // 计算全局样式类名
       if (enableGlobalCss) {
@@ -131,7 +134,7 @@ module.exports = function(schema, option) {
   option.blocksCount = blocks.length;
 
   // export module code
-  let panelDisplay = [];
+  let panelDisplay: IPanelDisplay[] = [];
 
   const panelImports = []
 
@@ -147,7 +150,7 @@ module.exports = function(schema, option) {
   }
 
 
-  if(imgcookConfig.outputStyle !== 'component'){
+  if(dslConfig.outputStyle !== 'component'){
     // 依赖 package.json
     const dependencies = {};
     for(let item of panelDisplay){

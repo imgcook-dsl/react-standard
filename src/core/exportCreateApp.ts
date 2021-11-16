@@ -1,11 +1,16 @@
-function exportCreateApp(schema, option) {
+import { IPanelDisplay } from './interface';
+const { CSS_TYPE } = require('./consts');
+
+export default function exportCreateApp(schema, option): IPanelDisplay[]  {
   const folderName = schema.folderName;
   const {
     dependencies,
+    dslConfig,
+    _,
   } = option;
 
   let panelValue = '';
-  const panelDisplay = [];
+  const panelDisplay: IPanelDisplay[] = [];
   
  panelValue = `<!DOCTYPE html>
 <html lang="en">
@@ -27,9 +32,11 @@ function exportCreateApp(schema, option) {
   });
 
   // index.js
+  const isGlobal = schema.css && dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS;
   panelValue = `'use strict';
   import React, { Component } from 'react'
   import ReactDOM from 'react-dom'
+  ${ isGlobal ? " import './global.css';": ''}
   import './index.css';
   import App from './${folderName}'
   
@@ -101,5 +108,3 @@ function exportCreateApp(schema, option) {
 
   return panelDisplay;
 }
-
-module.exports = exportCreateApp;

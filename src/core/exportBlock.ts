@@ -1,4 +1,5 @@
-const {
+import { IPanelDisplay, IImport } from './interface';
+import {
   toString,
   existImport,
   traverse,
@@ -15,12 +16,12 @@ const {
   parseDataSource,
   line2Hump,
   addAnimation,
-} = require('./utils');
+} from './utils';
 
-const { CSS_TYPE, prettierJsOpt, prettierCssOpt } = require('./consts');
+import { CSS_TYPE, prettierJsOpt, prettierCssOpt } from './consts';
 
 
-function exportMod(schema, option) {
+export default function exportMod(schema, option):IPanelDisplay[] {
   const {
     prettier,
     scale,
@@ -28,14 +29,14 @@ function exportMod(schema, option) {
     folder,
     blocksCount,
     blockInPage,
-    imgcookConfig = {},
+    dslConfig = {},
     pageGlobalCss,
     _,
   } = option;
 
-  const isExportGlobalFile = imgcookConfig.globalCss && blocksCount == 1 && !blockInPage;
+  const isExportGlobalFile = dslConfig.globalCss && blocksCount == 1 && !blockInPage;
   const fileName = schema.fileName;
-  const { cssUnit } = imgcookConfig;
+  const { cssUnit } = dslConfig;
   const rootSchema = schema;
 
   let folderName;
@@ -52,46 +53,46 @@ function exportMod(schema, option) {
   const globalCss = pageGlobalCss + '\n' + (schema.css || '');
 
   // imports
-  let imports = [];
+  let imports: IImport[] = [];
 
   // imports mods
-  let importMods = [];
+  let importMods: { _import: string}[] = [];
 
   // import css
-  let importStyles = [];
+  let importStyles: string[] = [];
 
   // inline style
   const style = {};
 
   // Global Public Functions
-  const utils = [];
+  const utils: string[] = [];
 
   // states
   let statesData = null;
 
   // useState
-  let useState = [];
+  let useState: string[] = [];
 
   // calsses
-  let classes = [];
+  let classes: string[] = [];
 
   // methods
-  const methods = [];
+  const methods: string[] = [];
 
   // life cycles
-  let lifeCycles = [];
+  let lifeCycles: string[] = [];
 
   // init
-  const init = [];
+  const init: string[] = [];
 
-  const cssFileName = `${filePathName}${imgcookConfig.inlineStyle == CSS_TYPE.MODULE_CLASS ? '.module':''}.css`
+  const cssFileName = `${filePathName}${dslConfig.inlineStyle == CSS_TYPE.MODULE_CLASS ? '.module':''}.css`
 
 
-  if (imgcookConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
+  if (dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
     if (isExportGlobalFile) {
       importStyles.push(`import './global.css';`);
     }
-    if (imgcookConfig.inlineStyle == CSS_TYPE.IMPORT_CLASS) {
+    if (dslConfig.inlineStyle == CSS_TYPE.IMPORT_CLASS) {
       importStyles.push(`import './${cssFileName}';`);
     } else {
       importStyles.push(`import styles from './${cssFileName}';`);
@@ -132,11 +133,11 @@ function exportMod(schema, option) {
    * @param {*} isReplace 是否提取 block
    * @returns
    */
-  const generateRender = (schema, isReplace) => {
+  const generateRender = (schema, isReplace = false): string => {
     const componentName = schema.componentName;
     const type = schema.componentName.toLowerCase();
     let className = schema.props && schema.props.className;
-    className = genStyleClass(className, imgcookConfig.cssStyle);
+    className = genStyleClass(className, dslConfig.cssStyle);
     let classString = schema.classString;
 
     if (className) {
@@ -202,6 +203,7 @@ function exportMod(schema, option) {
           importMods.push({
             _import: `import ${compName} from '${compPath}/${compName}';`,
           });
+          delete style[className]
         } else if (schema.children && schema.children.length) {
           xml = `<div ${classString} ${props}>${schema.children
             .map((node) => {
@@ -251,7 +253,6 @@ function exportMod(schema, option) {
       xml = parseLoopData.value;
       
       useState = useState.concat(parseLoopData.hookState);
-      console.log('useState', useState)
     }
 
     xml = replaceState(xml);
@@ -272,7 +273,7 @@ function exportMod(schema, option) {
     const type = schema.componentName.toLowerCase();
 
      // 容器组件处理: state/method/dataSource/lifeCycle
-     const states = [];
+     const states: string[] = [];
 
      if (schema.state) {
        states.push(`state = ${toString(schema.state)};`);
@@ -320,7 +321,7 @@ function exportMod(schema, option) {
      const hooksView = generateRender(schema, false);
      const hasDispatch = hooksView.match('dispatch');
 
-     classData = `
+     const classData = `
      export default memo((props) => {
        ${useState.join('\n')}
        ${
@@ -346,18 +347,18 @@ function exportMod(schema, option) {
   };
 
   const transformComponent = (schema) => {
-    let result = '';
+    let result: string = '';
     const type = schema.componentName.toLowerCase();
 
     if (['page', 'block', 'component'].includes(type)) {
       // 容器组件处理: state/method/dataSource/lifeCycle/render
-      const states = [];
-      const lifeCycles = [];
-      const methods = [];
-      const init = [];
+      const states: string[] = [];
+      const lifeCycles: string[] = [];
+      const methods: string[] = [];
+      const init: string[] = [];
 
       let render = '';
-      let classData = '';
+      let classData: string = '';
 
       if (schema.state) {
         states.push(`this.state = ${toString(schema.state)};`);
@@ -366,7 +367,6 @@ function exportMod(schema, option) {
       if (schema.methods) {
         Object.keys(schema.methods).forEach((name) => {
           const { params, content } = parseFunction(schema.methods[name]);
-          console.log('hello', content)
           methods.push(`${name}(${params}) {${content}}`);
         });
       }
@@ -438,12 +438,12 @@ function exportMod(schema, option) {
     return result;
   };
 
-  // if( imgcookConfig.useHooks){
+  // if( dslConfig.useHooks){
   //   transformHooks(schema)
   // }else{
   //   transformComponent(schema)
   // }
-  const transform = imgcookConfig.useHooks
+  const transform = dslConfig.useHooks
     ? transformHooks
     : transformComponent;
 
@@ -459,7 +459,7 @@ function exportMod(schema, option) {
   // start parse schema
   transform(schema);
   let indexValue = '';
-  if (imgcookConfig.useHooks) {
+  if (dslConfig.useHooks) {
     // const hooksView = generateRender(schema);
     // const hasDispatch = hooksView.match('dispatch');
     indexValue = `
@@ -488,14 +488,14 @@ function exportMod(schema, option) {
   `;
   }
 
-  const prefix = imgcookConfig.inlineStyle
+  const prefix = dslConfig.inlineStyle
     ? ''
     : schema.props && schema.props.className;
 
   // 获取当前 节点 所有 动画参数
   const animationKeyframes = addAnimation(schema);
 
-  const panelDisplay = [
+  const panelDisplay: IPanelDisplay[] = [
     {
       panelName: `${filePathName}.jsx`,
       panelValue: prettier.format(indexValue, prettierJsOpt),
@@ -506,7 +506,7 @@ function exportMod(schema, option) {
   ];
 
   // 非内联模式 才引入 index.module.css
-  if (imgcookConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
+  if (dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
     panelDisplay.push({
       panelName: cssFileName,
       panelValue: prettier.format(
@@ -531,4 +531,3 @@ function exportMod(schema, option) {
   return panelDisplay;
 }
 
-module.exports = exportMod;
