@@ -1,7 +1,7 @@
 import { IPanelDisplay } from './interface';
 const { CSS_TYPE } = require('./consts');
 
-export default function exportCreateApp(schema, option): IPanelDisplay[]  {
+export default function exportCreateApp(schema, option): IPanelDisplay[] {
   const folderName = schema.folderName;
   const {
     dependencies,
@@ -11,8 +11,8 @@ export default function exportCreateApp(schema, option): IPanelDisplay[]  {
 
   let panelValue = '';
   const panelDisplay: IPanelDisplay[] = [];
-  
- panelValue = `<!DOCTYPE html>
+
+  panelValue = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -34,17 +34,17 @@ export default function exportCreateApp(schema, option): IPanelDisplay[]  {
   // index.js
   const isGlobal = schema.css && dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS;
   panelValue = `'use strict';
-  import React, { Component } from 'react'
+  import React from 'react'
   import ReactDOM from 'react-dom'
-  ${ isGlobal ? " import './global.css';": ''}
+  ${isGlobal ? " import './global.css';" : ''}
   import './index.css';
   import App from './${folderName}'
   
   ReactDOM.render(<App />, document.getElementById('container'));
   `
   panelDisplay.push({
-    panelName: `index.js`,
-    panelType: 'js',
+    panelName: `index.${ dslConfig.useTypescript?'tsx': 'jsx'}`,
+    panelType:  dslConfig.useTypescript?'tsx': 'jsx',
     panelValue,
     folder: option.folder || '',
   });
@@ -104,6 +104,42 @@ export default function exportCreateApp(schema, option): IPanelDisplay[]  {
     folder: option.folder || '',
   });
 
+
+  if (dslConfig.useTypescript) {
+    panelValue = `{
+      "compilerOptions": {
+        "target": "es5",
+        "lib": [
+          "dom",
+          "dom.iterable",
+          "esnext"
+        ],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx"
+      },
+      "include": [
+        "src"
+      ]
+    }
+     `
+    panelDisplay.push({
+      panelName: `tsconfig.json`,
+      panelType: 'json',
+      panelValue,
+      folder: option.folder || '',
+    });
+  }
 
 
   return panelDisplay;

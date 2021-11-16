@@ -39,6 +39,7 @@ module.exports = function(schema, option) {
   );
 
   dslConfig.useHooks = dslConfig.componentStyle ===  COMPONENT_TYPE.HOOKS;
+  dslConfig.useTypescript = dslConfig.jsx === 'typescript'
   option.dslConfig = dslConfig;
 
   // 初始化全局参数

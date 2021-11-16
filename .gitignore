@@ -5,6 +5,7 @@ npm-debug.log
 /test/template.*
 codeExample
 demo
+demo-ts
 dist/
 coverage
 .nyc_output

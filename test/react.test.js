@@ -43,10 +43,10 @@ describe('globalCss 全局样式', () => {
 
 describe('outputStyle 风格参数', () => {
   it('outputStyle = project 时， 有 package.json文件', async () => {
-    const result = runCode(data, { globalCss: true});
+    const result = runCode(data, { globalCss: true, jsx: 'javascript'});
     expect(_.find(result, { panelName:'package.json'})).to.not.be.equal(undefined);
     expect(_.find(result, { panelName:'index.html'})).to.not.be.equal(undefined);
-    expect(_.find(result, { panelName:'index.js'})).to.not.be.equal(undefined);
+    expect(_.find(result, { panelName:'index.jsx'})).to.not.be.equal(undefined);
     expect(_.find(result, { panelName:'index.css'})).to.not.be.equal(undefined);
   });
 
@@ -56,7 +56,21 @@ describe('outputStyle 风格参数', () => {
   });
 });
 
+describe('jsx 支持TS', () => {
+  it(`jsx = javascript 时`, async () => {
+    const schema = _.cloneDeep(data);
+    const result = runCode(schema, { inlineStyle: 'import', jsx: 'javascript'});
+    const file = _.find(result, { panelType:'tsx'});
+    expect(file).to.be.equal(undefined);
+  });
 
+  it(`jsx = typescript 时`, async () => {
+    const schema = _.cloneDeep(data);
+    const result = runCode(schema, { inlineStyle: 'import', jsx: 'typescript'});
+    const file = _.find(result, { panelType:'jsx'});
+    expect(file).to.be.equal(undefined);
+  });
+});
 describe('cssStyle 样式名风格', () => {
   it(`cssStyle = kebabCase 时，中划线命名`, async () => {
     const schema = _.cloneDeep(data);
@@ -75,6 +89,7 @@ describe('cssStyle 样式名风格', () => {
     schema.props.className = "class-name-01"
     const result = runCode(schema, { inlineStyle: 'import', cssStyle: 'snakeCase'});
     const file = _.find(result, { panelName:'index.css',    folder: 'components/BlockDemo'});
+
     expect(file.panelValue.includes(`.class_name_01`)).to.be.equal(true);
   });
 
@@ -123,24 +138,33 @@ describe('inlineStyle 样式引入方式', () => {
 
 describe('cssUnit 单位设置', () => {
   it('cssUnit = px', async () => {
-    const result = runCode(data, { globalCss: true,  cssUnit: 'px'});
-    const cssFile = _.find(result, { panelName:'index.css'});
+    const schema = _.cloneDeep(data);
+    schema.componentName = 'Block';
+    schema.fileName = 'BlockDemo';
+    const result = runCode(schema, { inlineStyle: 'import', cssUnit: 'px'});
+    const cssFile = _.find(result, { panelName:'index.css',    folder: 'components/BlockDemo'});
     expect(cssFile.panelValue.includes('px')).to.be.equal(true);
     expect(cssFile.panelValue.includes('vw')).to.be.equal(false);
     expect(cssFile.panelValue.includes('rem')).to.be.equal(false);
   });
 
   it('cssUnit = vw', async () => {
-    const result = runCode(data, { globalCss: true,  cssUnit: 'vw'});
-    const cssFile = _.find(result, { panelName:'index.css'});
+    const schema = _.cloneDeep(data);
+    schema.componentName = 'Block';
+    schema.fileName = 'BlockDemo';
+    const result = runCode(schema, { inlineStyle: 'import', cssUnit: 'vw'});
+    const cssFile = _.find(result, { panelName:'index.css',    folder: 'components/BlockDemo'});
     expect(cssFile.panelValue.includes('px')).to.be.equal(false);
     expect(cssFile.panelValue.includes('vw')).to.be.equal(true);
     expect(cssFile.panelValue.includes('rem')).to.be.equal(false);
   });
 
   it('cssUnit = rem', async () => {
-    const result = runCode(data, { globalCss: true, cssUnit: 'rem'});
-    const cssFile = _.find(result, { panelName:'index.css'});
+    const schema = _.cloneDeep(data);
+    schema.componentName = 'Block';
+    schema.fileName = 'BlockDemo';
+    const result = runCode(schema, { inlineStyle: 'import', cssUnit: 'rem'});
+    const cssFile = _.find(result, { panelName:'index.css',    folder: 'components/BlockDemo'});
     expect(cssFile.panelValue.includes('px')).to.be.equal(false);
     expect(cssFile.panelValue.includes('vw')).to.be.equal(false);
     expect(cssFile.panelValue.includes('rem')).to.be.equal(true);

@@ -510,8 +510,6 @@ export const parseDataSource = (data, imports: {
   }
 
 
-  console.log('payload1', params, payload)
-
   let result = `{
   return ${action}(${parseProps(uri)}, ${toString(payload)})
     .then((response) => response.json())

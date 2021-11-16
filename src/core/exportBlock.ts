@@ -47,7 +47,6 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     // filePathName = schema.fileName
   }else{
     folderName = blocksCount == 1 && dslConfig.outputStyle !== OUTPUT_TYPE.PROJECT? '' : ('components/' + schema.fileName);
-    console.log('folderName', folderName)
   }
   schema.folderName = folderName;
 
@@ -461,7 +460,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     // const hasDispatch = hooksView.match('dispatch');
     indexValue = `
       'use strict';
-      import React, { createElement, useState, useEffect, memo } from 'react';
+      import React, { useState, useEffect, memo } from 'react';
       ${imports.map((i) => i._import).join('\n')}
       ${importMods.map((i) => i._import).join('\n')}
   
@@ -475,7 +474,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     indexValue = `
     'use strict';
 
-    import React, { createElement, Component} from 'react';
+    import React, { Component} from 'react';
     ${imports.map((i) => i._import).join('\n')}
     ${importMods.map((i) => i._import).join('\n')}
     ${importStyles.map((i) => i).join('\n')}
@@ -494,9 +493,9 @@ export default function exportMod(schema, option):IPanelDisplay[] {
 
   const panelDisplay: IPanelDisplay[] = [
     {
-      panelName: `${filePathName}.jsx`,
+      panelName: `${filePathName}.${dslConfig.useTypescript?'tsx': 'jsx'}`,
       panelValue: prettier.format(indexValue, prettierJsOpt),
-      panelType: 'js',
+      panelType: dslConfig.useTypescript?'tsx': 'jsx',
       folder: folderName,
       panelImports: imports,
     },
