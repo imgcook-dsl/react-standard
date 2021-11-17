@@ -49,29 +49,15 @@ module.exports = function(schema, option) {
   // inlineStyle = inlineStyle !== 'className';
 
 
-  const { cssUnit, inlineStyle } = dslConfig
+  const { inlineStyle } = dslConfig
   // clear schema
   initSchema(schema);
 
-  // 计数器
-  let counter = {};
-  const getCounter = (key)=>{
-    counter[key] =  (counter[key] || 0) + 1
-    return  counter[key];
-  }
-
+  // 记录所有blocks
   traverse(schema, (json) => {
     switch (json.componentName.toLowerCase()) {
-      case 'page':
-        json.fileName = line2Hump(json.fileName || `page_${getCounter('page')}`);
-        break;
       case 'block':
-        // parse fileName
-        json.fileName = line2Hump(json.fileName || `block_${getCounter('block')}`);
-        
         blocks.push(json);
-        break;
-      default:
         break;
     }
   });

@@ -138,12 +138,42 @@ export const toUpperCaseStart = (value) => {
   return value.charAt(0).toUpperCase() + value.slice(1);
 };
 
-// 处理schema一些常见问题
-export const initSchema = (json) => {
+
+// 计数器
+let counter = {};
+const getCounter = (key)=>{
+  counter[key] =  (counter[key] || 0) + 1
+  return  counter[key];
+}
+
+/**
+ * 处理schema一些常见问题
+ * @param schema 
+ * 1. 清理 class 空格
+ * 2. 关键节点命名兜底
+ */
+export const initSchema = (schema) => {
   // 清理 class 空格
-  traverse(json, (node) => {
+  traverse(schema, (node) => {
     if (node && node.props && node.props.className) {
       node.props.className = node.props.className.trim();
+    }
+  });
+
+  // 关键节点命名兜底
+  traverse(schema, (json) => {
+    switch (json.componentName.toLowerCase()) {
+      case 'page':
+        json.fileName = line2Hump(json.fileName || `page_${getCounter('page')}`);
+        break;
+      case 'block':
+        json.fileName = line2Hump(json.fileName || `block_${getCounter('block')}`);
+        break;
+      case 'component':
+        json.fileName = line2Hump(json.fileName || `component_${getCounter('component')}`);
+        break;
+      default:
+        break;
     }
   });
 };
@@ -174,13 +204,18 @@ export const traverse = (json, callback) => {
 };
 
 export const genStyleClass = (string, type) => {
-  switch (type) {
-    case 'camelCase': return camelCase(string);
-    case 'kebabCase': return kebabCase(string);
-    case 'snakeCase': return snakeCase(string);
-    default:
-      return camelCase(string);
-  }
+  let classArray = string.split(' ');
+  classArray = classArray.filter(name=> !!name);
+  classArray = classArray.map(name=>{
+    switch(type){
+      case 'camelCase': return camelCase(name);
+      case 'kebabCase': return kebabCase(name);
+      case 'snakeCase': return snakeCase(name);
+      default:
+        return camelCase(name);
+    }
+  });
+  return classArray.join(' ')
 }
 
 export const genStyleCode = (styles, key) => {
@@ -189,7 +224,7 @@ export const genStyleCode = (styles, key) => {
     : `${styles}['${key}']`;
 };
 
-export const parseNumberValue = (value, { cssUnit, scale }) => {
+export const parseNumberValue = (value, { cssUnit = 'px', scale }) => {
   value = String(value).replace(/\b[\d\.]+(px|rem|rpx|vw)?\b/, (v) => {
     const nv = parseFloat(v);
     if (!isNaN(nv) && nv !== 0) {
@@ -203,12 +238,12 @@ export const parseNumberValue = (value, { cssUnit, scale }) => {
     if (cssUnit == 'rpx') {
       value += 'px';
     } if (cssUnit == 'rem') {
-      const htmlFontSize = DSL_CONFIG.htmlFontSize;
+      const htmlFontSize = DSL_CONFIG.htmlFontSize || 16;
       value = parseFloat((value / htmlFontSize).toFixed(2));
       value =  value ? `${value}rem` : value;
     } else if (cssUnit == 'vw') {
       const _w = 750 / scale
-      value = (parseInt(value) / _w).toFixed(2);
+      value = (100 * parseInt(value) / _w).toFixed(2);
       value = value == 0 ? value : value + 'vw';
     } else {
       value += cssUnit;
@@ -251,9 +286,13 @@ export const parseStyle = (style, params) => {
         }
         break;
       default:
-        if (style[key] && /^[\d\.]+px$/.test(style[key])) {
-          resultStyle[key] = parseNumberValue(style[key], params);
-        }else{
+        if (style[key]) {
+          if (String(style[key]).includes('px')) {
+            resultStyle[key] = String(style[key]).replace(/[\d\.]+px/g, (v) => {
+              return /^[\d\.]+px$/.test(v) ? parseNumberValue(v, params) : v;
+            })
+          }
+        } else {
           resultStyle[key] = style[key]
         }
     }
@@ -586,29 +625,3 @@ export const addAnimation = function (schema) {
   })
   return animationRes;
 };
-
-// module.exports = {
-//   isExpression,
-//   toString,
-//   transComponentsMap,
-//   line2Hump,
-//   existImport,
-//   toUpperCaseStart,
-//   initSchema,
-//   traverse,
-//   genStyleCode,
-//   getGlobalClassNames,
-//   parseStyle,
-//   parseDataSource,
-//   parseFunction,
-//   parseLoop,
-//   parseCondition,
-//   parseProps,
-//   parseState,
-//   parseLifeCycles,
-//   replaceState,
-//   generateCSS,
-//   getText,
-//   addAnimation,
-//   genStyleClass
-// };
