@@ -197,7 +197,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       case 'component':
         if (isReplace) {
           const compName = schema.fileName;
-          xml = `<${compName}${props} />`;
+          xml = `<${compName}/>`;
           // 当前是 Page 模块
           const  compPath = rootSchema.componentName == 'Page' ? '../../components': '..';
           importMods.push({
@@ -248,7 +248,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         schema.loop,
         schema.loopArgs,
         xml,
-        statesData
+        {}
       );
       xml = parseLoopData.value;
       

@@ -8,6 +8,18 @@ export const prettierCssOpt = {
   parser: 'css',
 };
 
+export const prettierJsonOpt = {
+  parser: 'json',
+};
+
+
+export const prettierHtmlOpt = {
+  parser: 'html',
+  printWidth: 120,
+  singleQuote: true
+};
+
+
 export const CSS_TYPE = {
   MODULE_CLASS: 'module',
   MODULE_STYLE: 'module_style',

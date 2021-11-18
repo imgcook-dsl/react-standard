@@ -1,5 +1,7 @@
 import { IPanelDisplay } from './interface';
-const { CSS_TYPE } = require('./consts');
+
+import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt, prettierJsonOpt, prettierHtmlOpt } from './consts';
+
 
 export default function exportCreateApp(schema, option): IPanelDisplay[] {
   const folderName = schema.folderName;
@@ -7,6 +9,7 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
     dependencies,
     dslConfig,
     _,
+    prettier
   } = option;
 
   let panelValue = '';
@@ -45,7 +48,7 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
   panelDisplay.push({
     panelName: `index.${ dslConfig.useTypescript?'tsx': 'jsx'}`,
     panelType:  dslConfig.useTypescript?'tsx': 'jsx',
-    panelValue,
+    panelValue:  prettier.format(panelValue, prettierHtmlOpt),
     folder: option.folder || '',
   });
 
@@ -54,7 +57,7 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
   panelDisplay.push({
     panelName: `index.css`,
     panelType: 'css',
-    panelValue,
+    panelValue:  prettier.format(panelValue, prettierCssOpt),
     folder: option.folder || '',
   });
 
@@ -100,7 +103,7 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
   panelDisplay.push({
     panelName: `package.json`,
     panelType: 'json',
-    panelValue,
+    panelValue:  prettier.format(panelValue, prettierJsonOpt),
     folder: option.folder || '',
   });
 
@@ -136,7 +139,7 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
     panelDisplay.push({
       panelName: `tsconfig.json`,
       panelType: 'json',
-      panelValue,
+      panelValue:  prettier.format(panelValue, prettierJsonOpt),
       folder: option.folder || '',
     });
   }

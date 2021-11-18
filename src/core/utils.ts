@@ -88,7 +88,7 @@ export const isEmptyObj = (o) => {
 };
 
 interface IComp { list?: { name: string; packageName: string; dependenceVersion: string; dependence: string }[] };
-export const transComponentsMap = (compsMap: IComp  = {}) => {
+export const transComponentsMap = (compsMap: IComp = {}) => {
   if (!compsMap || !Array.isArray(compsMap.list)) {
     return [];
   }
@@ -141,9 +141,13 @@ export const toUpperCaseStart = (value) => {
 
 // 计数器
 let counter = {};
-const getCounter = (key)=>{
-  counter[key] =  (counter[key] || 0) + 1
-  return  counter[key];
+const getCounter = (key) => {
+  counter[key] = (counter[key] || 0) + 1
+  return counter[key];
+}
+
+export const resetCounter = (key) => {
+  counter[key] = 0;
 }
 
 /**
@@ -153,6 +157,11 @@ const getCounter = (key)=>{
  * 2. 关键节点命名兜底
  */
 export const initSchema = (schema) => {
+  //  重置计数器
+  resetCounter('page');
+  resetCounter('block');
+  resetCounter('component');
+
   // 清理 class 空格
   traverse(schema, (node) => {
     if (node && node.props && node.props.className) {
@@ -205,9 +214,9 @@ export const traverse = (json, callback) => {
 
 export const genStyleClass = (string, type) => {
   let classArray = string.split(' ');
-  classArray = classArray.filter(name=> !!name);
-  classArray = classArray.map(name=>{
-    switch(type){
+  classArray = classArray.filter(name => !!name);
+  classArray = classArray.map(name => {
+    switch (type) {
       case 'camelCase': return camelCase(name);
       case 'kebabCase': return kebabCase(name);
       case 'snakeCase': return snakeCase(name);
@@ -240,7 +249,7 @@ export const parseNumberValue = (value, { cssUnit = 'px', scale }) => {
     } if (cssUnit == 'rem') {
       const htmlFontSize = DSL_CONFIG.htmlFontSize || 16;
       value = parseFloat((value / htmlFontSize).toFixed(2));
-      value =  value ? `${value}rem` : value;
+      value = value ? `${value}rem` : value;
     } else if (cssUnit == 'vw') {
       const _w = 750 / scale
       value = (100 * parseInt(value) / _w).toFixed(2);
@@ -286,15 +295,12 @@ export const parseStyle = (style, params) => {
         }
         break;
       default:
-        if (style[key]) {
-          if (String(style[key]).includes('px')) {
-            resultStyle[key] = String(style[key]).replace(/[\d\.]+px/g, (v) => {
-              return /^[\d\.]+px$/.test(v) ? parseNumberValue(v, params) : v;
-            })
-          }
-        } else {
-          resultStyle[key] = style[key]
+        if (style[key] && String(style[key]).includes('px')) {
+          resultStyle[key] = String(style[key]).replace(/[\d\.]+px/g, (v) => {
+            return /^[\d\.]+px$/.test(v) ? parseNumberValue(v, params) : v;
+          })
         }
+        resultStyle[key] = resultStyle[key] || style[key]
     }
   }
 
@@ -374,8 +380,9 @@ export const generateCSS = (style, prefix) => {
   return css;
 };
 
+
 // parse loop render
-export const parseLoop = (loop, loopArg, render, states) => {
+export const parseLoop = (loop, loopArg, render, params = {}) => {
   let data;
   let loopArgItem = (loopArg && loopArg[0]) || 'item';
   let loopArgIndex = (loopArg && loopArg[1]) || 'index';
@@ -400,10 +407,11 @@ export const parseLoop = (loop, loopArg, render, states) => {
     stateValue = `state.${data.split('.').pop()}`;
   }
 
+  const formatRender = params['formatRender'] || function (str) { return str };
   return {
     hookState: [],
     value: `${stateValue}.map((${loopArgItem}, ${loopArgIndex}) => {
-      return (${render});
+      return (${formatRender(render)});
     })`,
   };
 };
@@ -538,10 +546,10 @@ export const parseDataSource = (data, imports: {
   let comma = isEmptyObj(payload) ? '' : ',';
   // params parse should in string template
   if (params) {
-    if(method !== 'GET'){
+    if (method !== 'GET') {
       payload = `${toString(payload).slice(0, -1)} ${comma} body: ${isExpression(params) ? parseProps(params) : toString(params)
-      }}`;
-    }else{
+        }}`;
+    } else {
       payload = `${toString(payload).slice(0, -1)}}`;
     }
   } else {
@@ -574,7 +582,7 @@ export const parseDataSource = (data, imports: {
 };
 
 // get children text
-const getText = (schema) => {
+export const getText = (schema) => {
   let text = '';
 
   const getChildrenText = (schema) => {
