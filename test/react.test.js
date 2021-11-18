@@ -43,7 +43,7 @@ describe('globalCss 全局样式', () => {
 
 describe('outputStyle 风格参数', () => {
   it('outputStyle = project 时， 有 package.json文件', async () => {
-    const result = runCode(data, { globalCss: true, jsx: 'javascript'});
+    const result = runCode(data, { globalCss: true, jsx: 'javascript', outputStyle: 'project'});
     expect(_.find(result, { panelName:'package.json'})).to.not.be.equal(undefined);
     expect(_.find(result, { panelName:'index.html'})).to.not.be.equal(undefined);
     expect(_.find(result, { panelName:'index.jsx'})).to.not.be.equal(undefined);

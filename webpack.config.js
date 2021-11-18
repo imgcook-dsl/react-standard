@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  watch: true,
+  watch: false,
   // entry: './src/entry.js',
   entry: './src/core/entry.ts',
   resolve: {

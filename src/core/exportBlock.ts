@@ -233,13 +233,13 @@ export default function exportMod(schema, option):IPanelDisplay[] {
           schema.children.length &&
           Array.isArray(schema.children)
         ) {
-          xml = `<${componentName}${classString}${props}>${transform(
+          xml = `<${componentName} ${classString} ${props}>${transform(
             schema.children
           )}</${componentName}>`;
         } else if (typeof schema.children === 'string') {
-          xml = `<${componentName}${classString}${props} >${schema.children}</${componentName}>`;
+          xml = `<${componentName} ${classString} ${props} >${schema.children}</${componentName}>`;
         } else {
-          xml = `<${componentName}${classString}${props} />`;
+          xml = `<${componentName} ${classString} ${props} />`;
         }
     }
 
