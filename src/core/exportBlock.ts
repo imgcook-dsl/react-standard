@@ -103,13 +103,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     let componentMap = componentsMap[componentName] || {};
     let packageName =
       componentMap.package || componentMap.packageName || componentName;
-    // if (
-    //   packageName &&
-    //   ['view', 'image', 'text', 'picture'].indexOf(packageName.toLowerCase()) >=
-    //     0
-    // ) {
-    //   packageName = `rax-${packageName.toLowerCase()}`;
-    // }
+ 
     const singleImport = `import ${componentName} from '${packageName}'`;
     if (!existImport(imports, singleImport)) {
       imports.push({
@@ -129,19 +123,19 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   // generate render xml
   /**
    *
-   * @param {*} schema
+   * @param {*} json
    * @param {*} isReplace 是否提取 block
    * @returns
    */
-  const generateRender = (schema, isReplace = false): string => {
-    const componentName = schema.componentName;
-    const type = schema.componentName.toLowerCase();
-    let className = schema.props && schema.props.className;
+  const generateRender = (json, isReplace = false): string => {
+    const componentName = json.componentName;
+    const type = json.componentName.toLowerCase();
+    let className = json.props && json.props.className;
     className = genStyleClass(className, dslConfig.cssStyle);
-    let classString = schema.classString;
+    let classString = json.classString;
 
     if (className) {
-      style[className] = parseStyle(schema.props.style, {
+      style[className] = parseStyle(json.props.style, {
         scale,
         cssUnit,
       });
@@ -150,10 +144,10 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     let xml;
     let props = '';
 
-    Object.keys(schema.props).forEach((key) => {
+    Object.keys(json.props).forEach((key) => {
       if (key === 'codeStyle') {
-        if (schema.props[key] && JSON.stringify(schema.props[key]) !== '{}') {
-          props += ` style={${parseProps(schema.props[key])}}`;
+        if (json.props[key] && JSON.stringify(json.props[key]) !== '{}') {
+          props += ` style={${parseProps(json.props[key])}}`;
         }
       }
 
@@ -162,17 +156,17 @@ export default function exportMod(schema, option):IPanelDisplay[] {
           key
         ) === -1
       ) {
-        props += ` ${key}={${parseProps(schema.props[key])}}`;
+        props += ` ${key}={${parseProps(json.props[key])}}`;
       }
 
       // fix attr when type is not text
       if (type !== 'text' && ['text'].includes(key)) {
-        props += ` ${key}={${parseProps(schema.props[key])}}`;
+        props += ` ${key}={${parseProps(json.props[key])}}`;
       }
 
       if (key === 'codeStyle') {
-        if (schema.props[key] && JSON.stringify(schema.props[key]) !== '{}') {
-          props += ` style={${parseProps(schema.props[key])}}`;
+        if (json.props[key] && JSON.stringify(json.props[key]) !== '{}') {
+          props += ` style={${parseProps(json.props[key])}}`;
         }
       }
     });
@@ -180,14 +174,14 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     switch (type) {
       case 'text':
         let innerText =
-          parseProps(schema.props.text || schema.text, true) || '';
+          parseProps(json.props.text || json.text, true) || '';
         if (innerText.match(/this\.props/)) {
           innerText = innerText.replace(/this\./, '');
         }
         xml = `<span ${classString} ${props}>${innerText || ''}</span>`;
         break;
       case 'image':
-        let source = parseProps(schema.props.src);
+        let source = parseProps(json.props.src);
         source = (source && `src=${source}`) || '';
         xml = `<img ${classString} ${props} ${source} />`;
         break;
@@ -196,7 +190,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       case 'block':
       case 'component':
         if (isReplace) {
-          const compName = schema.fileName;
+          const compName = json.fileName;
           xml = `<${compName}/>`;
           // 当前是 Page 模块
           const  compPath = rootSchema.componentName == 'Page' ? '../../components': '..';
@@ -204,8 +198,8 @@ export default function exportMod(schema, option):IPanelDisplay[] {
             _import: `import ${compName} from '${compPath}/${compName}';`,
           });
           delete style[className]
-        } else if (schema.children && schema.children.length) {
-          xml = `<div ${classString} ${props}>${schema.children
+        } else if (json.children && json.children.length) {
+          xml = `<div ${classString} ${props}>${json.children
             .map((node) => {
               return generateRender(node, true);
             })
@@ -216,8 +210,8 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         break;
       case 'div':
       case 'view':
-        if (schema.children && schema.children.length) {
-          xml = `<div ${classString} ${props}>${schema.children
+        if (json.children && json.children.length) {
+          xml = `<div ${classString} ${props}>${json.children
             .map((node) => {
               return generateRender(node, true);
             })
@@ -227,26 +221,28 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         }
         break;
       default:
-        collectImports(schema.componentName);
+        collectImports(json.componentName);
         if (
-          schema.children &&
-          schema.children.length &&
-          Array.isArray(schema.children)
+          json.children &&
+          json.children.length &&
+          Array.isArray(json.children)
         ) {
-          xml = `<${componentName} ${classString} ${props}>${transform(
-            schema.children
-          )}</${componentName}>`;
-        } else if (typeof schema.children === 'string') {
-          xml = `<${componentName} ${classString} ${props} >${schema.children}</${componentName}>`;
+          xml = `<${componentName} ${classString} ${props}>${json.children
+            .map((node) => {
+              return generateRender(node, true);
+            })
+            .join('')}</${componentName}>`;
+        } else if (typeof json.children === 'string') {
+          xml = `<${componentName} ${classString} ${props} >${json.children}</${componentName}>`;
         } else {
           xml = `<${componentName} ${classString} ${props} />`;
         }
     }
 
-    if (schema.loop) {
+    if (json.loop) {
       const parseLoopData = parseLoop(
-        schema.loop,
-        schema.loopArgs,
+        json.loop,
+        json.loopArgs,
         xml,
         {}
       );
@@ -257,38 +253,38 @@ export default function exportMod(schema, option):IPanelDisplay[] {
 
     xml = replaceState(xml);
 
-    if (schema.condition) {
-      xml = parseCondition(schema.condition, xml);
+    if (json.condition) {
+      xml = parseCondition(json.condition, xml);
     }
-    if (schema.loop || schema.condition) {
+    if (json.loop || json.condition) {
       xml = `{${xml}}`;
     }
     return xml;
   };
 
   // parse schema
-  const transformHooks = (schema) => {
+  const transformHooks = (json) => {
     let result = '';
-    const blockName = schema.fileName || schema.id;
-    const type = schema.componentName.toLowerCase();
+    const blockName = json.fileName || json.id;
+    const type = json.componentName.toLowerCase();
 
      // 容器组件处理: state/method/dataSource/lifeCycle
      const states: string[] = [];
 
-     if (schema.state) {
-       states.push(`state = ${toString(schema.state)};`);
-       statesData = toString(schema.state);
+     if (json.state) {
+       states.push(`state = ${toString(json.state)};`);
+       statesData = toString(json.state);
      }
 
-     if (schema.methods) {
-       Object.keys(schema.methods).forEach((name) => {
-         const { params, content } = parseFunction(schema.methods[name]);
+     if (json.methods) {
+       Object.keys(json.methods).forEach((name) => {
+         const { params, content } = parseFunction(json.methods[name]);
          methods.push(`function ${name}(${params}) {${content}}`);
        });
      }
 
-     if (schema.dataSource && Array.isArray(schema.dataSource.list)) {
-       schema.dataSource.list.forEach((item) => {
+     if (json.dataSource && Array.isArray(json.dataSource.list)) {
+       json.dataSource.list.forEach((item) => {
          if (typeof item.isInit === 'boolean' && item.isInit) {
            init.push(`${item.id}();`);
          } else if (typeof item.isInit === 'string') {
@@ -301,24 +297,24 @@ export default function exportMod(schema, option):IPanelDisplay[] {
          imports = parseDataSourceData.imports;
        });
 
-       if (schema.dataSource.dataHandler) {
+       if (json.dataSource.dataHandler) {
          const { params, content } = parseFunction(
-           schema.dataSource.dataHandler
+           json.dataSource.dataHandler
          );
          methods.push(`const dataHandler = (${params}) => {${content}}`);
          init.push(`dataHandler()`);
        }
      }
 
-     if (schema.lifeCycles) {
-       lifeCycles = parseLifeCycles(schema, init);
+     if (json.lifeCycles) {
+       lifeCycles = parseLifeCycles(json, init);
      }
 
      if (statesData) {
        useState.push(parseState(statesData));
      }
 
-     const hooksView = generateRender(schema, false);
+     const hooksView = generateRender(json, false);
      const hasDispatch = hooksView.match('dispatch');
 
      const classData = `
@@ -346,9 +342,9 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     return result;
   };
 
-  const transformComponent = (schema) => {
+  const transformComponent = (json) => {
     let result: string = '';
-    const type = schema.componentName.toLowerCase();
+    const type = json.componentName.toLowerCase();
 
     if (['page', 'block', 'component'].includes(type)) {
       // 容器组件处理: state/method/dataSource/lifeCycle/render
@@ -360,19 +356,19 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       let render = '';
       let classData: string = '';
 
-      if (schema.state) {
-        states.push(`this.state = ${toString(schema.state)};`);
+      if (json.state) {
+        states.push(`this.state = ${toString(json.state)};`);
       }
 
-      if (schema.methods) {
-        Object.keys(schema.methods).forEach((name) => {
-          const { params, content } = parseFunction(schema.methods[name]);
+      if (json.methods) {
+        Object.keys(json.methods).forEach((name) => {
+          const { params, content } = parseFunction(json.methods[name]);
           methods.push(`${name}(${params}) {${content}}`);
         });
       }
 
-      if (schema.dataSource && Array.isArray(schema.dataSource.list)) {
-        schema.dataSource.list.forEach((item) => {
+      if (json.dataSource && Array.isArray(json.dataSource.list)) {
+        json.dataSource.list.forEach((item) => {
           if (typeof item.isInit === 'boolean' && item.isInit) {
             init.push(`this.${item.id}();`);
           } else if (typeof item.isInit === 'string') {
@@ -385,9 +381,9 @@ export default function exportMod(schema, option):IPanelDisplay[] {
           imports = parseDataSourceData.imports;
         });
 
-        if (schema.dataSource.dataHandler) {
+        if (json.dataSource.dataHandler) {
           const { params, content } = parseFunction(
-            schema.dataSource.dataHandler
+            json.dataSource.dataHandler
           );
           methods.push(`dataHandler(${params}) {${content}}`);
           init.push(`this.dataHandler()`);
@@ -395,18 +391,18 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       }
 
 
-      if (!schema.lifeCycles) {
-        schema.lifeCycles = {};
+      if (!json.lifeCycles) {
+        json.lifeCycles = {};
       }
 
-      if (!schema.lifeCycles['_constructor']) {
+      if (!json.lifeCycles['_constructor']) {
         lifeCycles.push(
           `constructor(props, context) { super(); ${states.join('\n')} ${init.join('\n')}}`
         );
       }
 
-      Object.keys(schema.lifeCycles).forEach((name) => {
-        const { params, content } = parseFunction(schema.lifeCycles[name]);
+      Object.keys(json.lifeCycles).forEach((name) => {
+        const { params, content } = parseFunction(json.lifeCycles[name]);
 
         if (name === '_constructor') {
           lifeCycles.push(
@@ -417,10 +413,10 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         }
       });
 
-      render = generateRender(schema, false);
+      render = generateRender(json, false);
 
       classData = `
-      export default class ${schema.fileName} extends Component {
+      export default class ${json.fileName} extends Component {
         ${lifeCycles.join('\n')}
         ${methods.join('\n')}
         render(){ 
@@ -432,7 +428,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
 
       classes.push(classData);
     } else {
-      result += generateRender(schema);
+      result += generateRender(json);
     }
 
     return result;

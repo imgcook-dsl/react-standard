@@ -165,12 +165,13 @@ export const initSchema = (schema) => {
   // 清理 class 空格
   traverse(schema, (node) => {
     if (node && node.props && node.props.className) {
-      node.props.className = node.props.className.trim();
+      node.props.className = String(node.props.className).trim();
     }
   });
 
   // 关键节点命名兜底
   traverse(schema, (json) => {
+    json.componentName = json.componentName || ''
     switch (json.componentName.toLowerCase()) {
       case 'page':
         json.fileName = line2Hump(json.fileName || `page_${getCounter('page')}`);
