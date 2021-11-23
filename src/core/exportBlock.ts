@@ -131,7 +131,6 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     const componentName = json.componentName;
     const type = json.componentName.toLowerCase();
     let className = json.props && json.props.className;
-    className = genStyleClass(className, dslConfig.cssStyle);
     let classString = json.classString;
 
     if (className) {
@@ -182,7 +181,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         break;
       case 'image':
         let source = parseProps(json.props.src);
-        source = (source && `src=${source}`) || '';
+        source = (source && `src={${source}}`) || '';
         xml = `<img ${classString} ${props} ${source} />`;
         break;
 

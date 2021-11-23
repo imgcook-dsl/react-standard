@@ -1,3 +1,4 @@
+import { IImport } from './interface';
 const find = require('lodash/find');
 const unset = require('lodash/unset');
 const camelCase = require('lodash/camelCase');
@@ -213,7 +214,7 @@ export const traverse = (json, callback) => {
   }
 };
 
-export const genStyleClass = (string, type) => {
+export const genStyleClass = (string = '', type) => {
   let classArray = string.split(' ');
   classArray = classArray.filter(name => !!name);
   classArray = classArray.map(name => {
@@ -229,6 +230,9 @@ export const genStyleClass = (string, type) => {
 }
 
 export const genStyleCode = (styles, key) => {
+  if(!key){
+    return ''
+  }
   return !/-/.test(key) && key.trim()
     ? `${styles}.${key}`
     : `${styles}['${key}']`;
@@ -323,7 +327,7 @@ export const parseFunction = (func) => {
 };
 
 // parse layer props(static values or expression)
-export const parseProps = (value, isReactNode?) => {
+export const parseProps = (value, isReactNode = false) => {
   if (typeof value === 'string') {
     if (isExpression(value)) {
       if (isReactNode) {
@@ -500,11 +504,7 @@ export const existImport = (imports, singleImport) => {
 };
 
 // parse async dataSource
-export const parseDataSource = (data, imports: {
-  _import: string,
-  package: string,
-  version: string,
-}[] = []) => {
+export const parseDataSource = (data, imports: IImport[] = []) => {
   const name = data.id;
   const { uri, method, params } = data.options;
   const action = data.type;
@@ -527,14 +527,14 @@ export const parseDataSource = (data, imports: {
 
       break;
     case 'jsonp':
-      // singleImport = `import {fetchJsonp} from 'fetch-jsonp';`;
-      // if (!existImport(imports, singleImport)) {
-      //   imports.push({
-      //     _import: singleImport,
-      //     package: 'fetch-jsonp',
-      //     version: '^1.1.3',
-      //   });
-      // }
+      singleImport = `import {fetchJsonp} from 'fetch-jsonp';`;
+      if (!existImport(imports, singleImport)) {
+        imports.push({
+          _import: singleImport,
+          package: 'fetch-jsonp',
+          version: '^1.1.3',
+        });
+      }
       break;
   }
 
