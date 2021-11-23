@@ -37,18 +37,18 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
   // index.js
   const isGlobal = schema.css && dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS;
   panelValue = `'use strict';
-  import React from 'react'
-  import ReactDOM from 'react-dom'
+  import React from 'react';
+  import ReactDOM from 'react-dom';
   ${isGlobal ? " import './global.css';" : ''}
   import './index.css';
-  import App from './${folderName}'
+  import App from './${folderName}';
   
   ReactDOM.render(<App />, document.getElementById('container'));
   `
   panelDisplay.push({
     panelName: `index.${ dslConfig.useTypescript?'tsx': 'jsx'}`,
     panelType:  dslConfig.useTypescript?'tsx': 'jsx',
-    panelValue:  prettier.format(panelValue, prettierHtmlOpt),
+    panelValue:  prettier.format(panelValue, prettierJsOpt),
     folder: option.folder || '',
   });
 
