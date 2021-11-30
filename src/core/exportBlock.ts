@@ -28,6 +28,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     componentsMap,
     folder,
     blocksCount,
+    pagesCount,
     blockInPage,
     dslConfig = {},
     pageGlobalCss,
@@ -42,11 +43,15 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   let folderName;
   let filePathName = 'index';
   if(schema.componentName == 'Page'){
-    // schema.fileName = 'App';
-    folderName =  ('pages/' + schema.fileName);
+    // 单页面
+    if(pagesCount == 1){
+      folderName = '';
+    }else{
+      folderName = 'pages/' + schema.fileName;
+    }
     // filePathName = schema.fileName
   }else{
-    folderName = blocksCount == 1 && dslConfig.outputStyle !== OUTPUT_TYPE.PROJECT? '' : ('components/' + schema.fileName);
+    folderName = pagesCount == 0 && blocksCount == 1 && dslConfig.outputStyle !== OUTPUT_TYPE.PROJECT? '' : ('components/' + schema.fileName);
   }
   schema.folderName = folderName;
 
@@ -192,7 +197,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
           const compName = json.fileName;
           xml = `<${compName}/>`;
           // 当前是 Page 模块
-          const  compPath = rootSchema.componentName == 'Page' ? '../../components': '..';
+          const  compPath = rootSchema.componentName == 'Page' ? './components': '..';
           importMods.push({
             _import: `import ${compName} from '${compPath}/${compName}';`,
           });

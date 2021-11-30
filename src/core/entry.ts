@@ -20,6 +20,7 @@ import exportGlobalCss from './exportGlobalCss';
 module.exports = function(schema, option) {
   // get blocks json
   const blocks: any[] = [];
+  const pages: any[] = []
 
   // 参数设置
   option.scale = 750 / ((option.responsive && option.responsive.width) || 750);
@@ -58,6 +59,9 @@ module.exports = function(schema, option) {
     switch (json.componentName.toLowerCase()) {
       case 'block':
         blocks.push(json);
+        break;
+      case 'page':
+        pages.push(json);
         break;
     }
   });
@@ -118,6 +122,7 @@ module.exports = function(schema, option) {
   });
 
   option.blocksCount = blocks.length;
+  option.pagesCount = pages.length;
 
   // export module code
   let panelDisplay: IPanelDisplay[] = [];
