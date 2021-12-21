@@ -214,7 +214,7 @@ export const traverse = (json, callback) => {
   }
 };
 
-export const genStyleClass = (string = '', type) => {
+export const genStyleClass = (string, type) => {
   let classArray = string.split(' ');
   classArray = classArray.filter(name => !!name);
   classArray = classArray.map(name => {
@@ -230,15 +230,13 @@ export const genStyleClass = (string = '', type) => {
 }
 
 export const genStyleCode = (styles, key) => {
-  if(!key){
-    return ''
-  }
   return !/-/.test(key) && key.trim()
     ? `${styles}.${key}`
     : `${styles}['${key}']`;
 };
 
-export const parseNumberValue = (value, { cssUnit = 'px', scale }) => {
+export const parseNumberValue = (value) => {
+  const { cssUnit = 'px', scale } = DSL_CONFIG
   value = String(value).replace(/\b[\d\.]+(px|rem|rpx|vw)?\b/, (v) => {
     const nv = parseFloat(v);
     if (!isNaN(nv) && nv !== 0) {
@@ -250,8 +248,8 @@ export const parseNumberValue = (value, { cssUnit = 'px', scale }) => {
   if (/^\-?[\d\.]+$/.test(value)) {
     value = parseFloat(value);
     if (cssUnit == 'rpx') {
-      value += 'px';
-    } if (cssUnit == 'rem') {
+      value += 'rpx';
+    } else if (cssUnit == 'rem') {
       const htmlFontSize = DSL_CONFIG.htmlFontSize || 16;
       value = parseFloat((value / htmlFontSize).toFixed(2));
       value = value ? `${value}rem` : value;
@@ -267,8 +265,8 @@ export const parseNumberValue = (value, { cssUnit = 'px', scale }) => {
 };
 
 // convert to responsive unit, such as vw
-export const parseStyle = (style, params) => {
-  const { scale, cssUnit } = params
+export const parseStyle = (style) => {
+  const { scale, cssUnit } = DSL_CONFIG
   const resultStyle = {}
   for (let key in style) {
     switch (key) {
@@ -296,13 +294,13 @@ export const parseStyle = (style, params) => {
       case 'borderRadius':
         resultStyle[key] = parseInt(style[key]) * scale;
         if (style[key]) {
-          resultStyle[key] = parseNumberValue(style[key], params);
+          resultStyle[key] = parseNumberValue(style[key]);
         }
         break;
       default:
         if (style[key] && String(style[key]).includes('px')) {
           resultStyle[key] = String(style[key]).replace(/[\d\.]+px/g, (v) => {
-            return /^[\d\.]+px$/.test(v) ? parseNumberValue(v, params) : v;
+            return /^[\d\.]+px$/.test(v) ? parseNumberValue(v) : v;
           })
         }
         resultStyle[key] = resultStyle[key] || style[key]
@@ -376,13 +374,103 @@ export const generateCSS = (style, prefix) => {
 
   for (let layer in style) {
     css += `${prefix && prefix !== layer ? '.' + prefix + ' ' : ''}.${layer} {`;
-    for (let key in style[layer]) {
-      css += `${parseCamelToLine(key)}: ${style[layer][key]};\n`;
-    }
-    css += '}';
+    css += generateCssString(style[layer])
+    css += '}'
   }
 
   return css;
+};
+
+/**
+ * （1）定位属性：position  display  float  left  top  right  bottom   overflow  clear   z-index
+（2）自身属性：width  height  padding  border  margin   background
+（3）文字样式：font-family   font-size   font-style   font-weight   font-varient   color   
+（4）文本属性：text-align   vertical-align   text-wrap   text-transform   text-indent    text-decoration   letter-spacing    word-spacing    white-space   text-overflow
+（5）css3中新增属性：content   box-shadow   border-radius  transform……
+ */
+const orderMap = [
+  "position", "display", "float", "left", "top", "right", "bottom", 
+  "flex-direction", "justify-content", "align-items", "align-self", "overflow", "clear", "z-index",
+  "width", "height", "max-width", "max-height", "padding", "padding-bottom", "padding-left", "padding-right", "padding-left", "border", "margin", "margin-top", "margin-bottom", "margin-left", "margin-right", "background", 
+  "background-color", "background-image", "background-size",
+  "font-family", "font-size", "font-style", "font-weight", "font-varient", "line-height", "color", "text-align", "vertical-align", "text-wrap", "text-transform", "text-indent", "text-decoration",
+  "letter-spacing", "word-spacing", "white-space", "text-overflow",
+  "content", "box-shadow", "border-radius", "transform"
+]
+// genrate css object string
+export const generateCssString = (style) => {
+  let css = '';
+  let array: any[] = [];
+
+  // 缩写margin
+  const margin = Object.keys(style).filter(item=>item.startsWith("margin"));
+  if(!style['margin'] &&margin.length >2){
+    style["margin"] = `${style["marginTop"] || 0} ${style["marginRight"] || 0} ${style["marginBottom"] || 0} ${style["marginLeft"] || 0}`
+    delete style["marginTop"];
+    delete style["marginLeft"];
+    delete style["marginBottom"];
+    delete style["marginRight"];
+  }
+
+    // 缩写 padding
+  const padding = Object.keys(style).filter(item=>item.startsWith("padding"));
+  if(!style['padding'] && padding.length >2){
+    style["padding"] = `${style["paddingTop"] || 0} ${style["paddingRight"] || 0} ${style["paddingBottom"] || 0} ${style["paddingLeft"] || 0}`
+    delete style["paddingTop"];
+    delete style["paddingLeft"];
+    delete style["paddingBottom"];
+    delete style["paddingRight"];
+  }
+
+  for (let key in style) {
+    const cssKey = parseCamelToLine(key);
+    const orderIndex = orderMap.indexOf(cssKey);
+    array.push({
+      key: cssKey,
+      value: style[key],
+      index: orderIndex == -1 ? 100 : orderIndex
+    })
+  }
+
+
+  array.sort((a, b) => {
+    return a.index - b.index
+  })
+
+  css = array.map(item => {
+    return `${item.key}: ${item.value};`
+  }).join('');
+
+  return css
+}
+
+// 根据 schema 生成 scss 或者 less
+export const generateScss = (schema) => {
+  let scss = '';
+
+  function walk(json) {
+    if (json.props.className) {
+      let className = json.props.className;
+      scss += `.${className}{`;
+      scss += `${generateCssString(parseStyle(json.props.style))};`;
+    }
+
+    if (json.children && json.children.length > 0) {
+      json.children.forEach((child) => {
+        if (!['block', 'component', 'page'].includes(child.componentName.toLowerCase())) {
+          walk(child)
+        }
+      });
+    }
+
+    if (json.props.className) {
+      scss += '}';
+    }
+  }
+
+  walk(schema);
+
+  return scss;
 };
 
 

@@ -14,6 +14,7 @@ export interface IImport {
 }
 
 export interface IDslConfig {
+  scale: number;
   globalCss: boolean;
   componentStyle: 'components' | 'hooks';
   cssUnit: 'px' | 'vw' | 'rpx' | 'rem';

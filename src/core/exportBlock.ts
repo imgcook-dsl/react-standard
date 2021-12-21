@@ -12,13 +12,13 @@ import {
   replaceState,
   parseCondition,
   generateCSS,
-  genStyleClass,
+  generateScss,
   parseDataSource,
   line2Hump,
   addAnimation,
 } from './utils';
 
-import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt } from './consts';
+import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt, prettierLessOpt, prettierScssOpt } from './consts';
 
 
 export default function exportMod(schema, option):IPanelDisplay[] {
@@ -90,7 +90,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   // init
   const init: string[] = [];
 
-  const cssFileName = `${filePathName}${dslConfig.inlineStyle == CSS_TYPE.MODULE_CLASS ? '.module':''}.css`
+  const cssFileName = `${filePathName}${dslConfig.inlineStyle == CSS_TYPE.MODULE_CLASS ? '.module' : ''}.${dslConfig.cssType || 'css'}`
 
 
   if (dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
@@ -139,10 +139,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     let classString = json.classString;
 
     if (className) {
-      style[className] = parseStyle(json.props.style, {
-        scale,
-        cssUnit,
-      });
+      style[className] = parseStyle(json.props.style);
     }
 
     let xml;
@@ -503,15 +500,34 @@ export default function exportMod(schema, option):IPanelDisplay[] {
 
   // 非内联模式 才引入 index.module.css
   if (dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
+
+    let cssPanelValue = ''
+    switch (dslConfig.cssType) {
+      case 'less':
+        cssPanelValue = prettier.format(
+          `${generateScss(schema)} ${animationKeyframes}`,
+          prettierLessOpt
+        );
+        break;
+      case 'scss':
+        cssPanelValue = prettier.format(
+          `${generateScss(schema)} ${animationKeyframes}`,
+          prettierScssOpt
+        );
+        break;
+      default:
+        cssPanelValue = prettier.format(
+          `${generateCSS(style, prefix)} ${animationKeyframes}`,
+          prettierCssOpt
+        )
+    }
     panelDisplay.push({
       panelName: cssFileName,
-      panelValue: prettier.format(
-        `${generateCSS(style, prefix)} ${animationKeyframes}`,
-        prettierCssOpt
-      ),
-      panelType: 'css',
+      panelValue: cssPanelValue,
+      panelType: dslConfig.cssType || 'css',
       folder: folderName,
     });
+    
   }
 
   // 只有一个模块时，生成到当前模块

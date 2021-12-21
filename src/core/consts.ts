@@ -12,6 +12,19 @@ export const prettierJsonOpt = {
   parser: 'json',
 };
 
+export const prettierScssOpt = {
+  parser: 'scss',
+  tabWidth: 2,
+  printWidth: 120,
+  singleQuote: true
+};
+
+export const prettierLessOpt = {
+  parser: 'less',
+  tabWidth: 2,
+  printWidth: 120,
+  singleQuote: true
+};
 
 export const prettierHtmlOpt = {
   parser: 'html',
@@ -40,6 +53,7 @@ export const OUTPUT_TYPE = {
 
 // 记录全局参数配置，初始化时直接修改
 export let DSL_CONFIG: IDslConfig = {
+  scale: 1,
   globalCss: true,
   cssUnit: 'px',
   componentStyle: 'hooks',

@@ -30,6 +30,7 @@ module.exports = function(schema, option) {
 
   const dslConfig = Object.assign(
     {
+      scale: option.scale,
       globalCss: true,
       cssUnit: 'px',
       inlineStyle: CSS_TYPE.MODULE_CLASS,
