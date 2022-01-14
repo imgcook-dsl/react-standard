@@ -79,7 +79,7 @@ module.exports = function(schema, option) {
 
   // 提取全局样式，类名数组存于 json.classString , 剩余样式覆盖 style
   traverse(schema, (json) => {
-    let className = json.props && json.props.className;
+    let className = json.props && json.props.className || '';
     let classString = '';
     let style = json.props.style;
    

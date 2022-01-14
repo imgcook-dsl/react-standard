@@ -230,7 +230,7 @@ export const simpleStyle = (schema) => {
 
 
   traverseBrother(schema, function (nodes) {
-    const sameStyle = getMaxSameStyles(nodes.map(item => item.props.style));
+    const sameStyle = getMaxSameStyles(nodes.filter(item=> item.props && item.props.style).map(item => item.props.style));
     if (Object.keys(sameStyle).length > 3) {
       const commonClassName = genStyleClass(
         nodes[0].props.className + '_common',
@@ -266,6 +266,7 @@ export const initSchema = (schema) => {
     if (node && node.props && node.props.className) {
       node.props.className = String(node.props.className).trim();
     }
+    node.componentName = node.componentName || 'div'
   });
 
   simpleStyle(schema)
@@ -355,14 +356,14 @@ export const genStyleClass = (string, type) => {
   return classArray.join(' ')
 }
 
-export const genStyleCode = (styles, key) => {
+export const genStyleCode = (styles, key = '') => {
   return !/-/.test(key) && key.trim()
     ? `${styles}.${key}`
     : `${styles}['${key}']`;
 };
 
 export const parseNumberValue = (value) => {
-  const { cssUnit = 'px', scale } = DSL_CONFIG
+  const { cssUnit = 'px', scale, responseWidth } = DSL_CONFIG
   value = String(value).replace(/\b[\d\.]+(px|rem|rpx|vw)?\b/, (v) => {
     const nv = parseFloat(v);
     if (!isNaN(nv) && nv !== 0) {
@@ -374,7 +375,8 @@ export const parseNumberValue = (value) => {
   if (/^\-?[\d\.]+$/.test(value)) {
     value = parseFloat(value);
     if (cssUnit == 'rpx') {
-      value += 'rpx';
+      value = 750 * value / Number(responseWidth);
+      value = value == 0 ? value : value + 'rpx';
     } else if (cssUnit == 'rem') {
       const htmlFontSize = DSL_CONFIG.htmlFontSize || 16;
       value = parseFloat((value / htmlFontSize).toFixed(2));

@@ -110,7 +110,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       componentMap.package || componentMap.packageName || componentName;
  
     const singleImport = `import ${componentName} from '${packageName}'`;
-    if (!existImport(imports, singleImport)) {
+    if (!existImport(imports, singleImport) && packageName) {
       imports.push({
         _import: singleImport,
         package: packageName,
@@ -133,10 +133,18 @@ export default function exportMod(schema, option):IPanelDisplay[] {
    * @returns
    */
   const generateRender = (json, isReplace = false): string => {
+    if(typeof json == 'string'){
+      return json
+    }
+    if(Array.isArray(json)){
+      return (json.map(item=>{
+        return generateRender(item, isReplace)
+      })).join('')
+    }
     const componentName = json.componentName;
     const type = json.componentName.toLowerCase();
     let className = json.props && json.props.className;
-    let classString = json.classString;
+    let classString = json.classString || '';
 
     if (className) {
       style[className] = parseStyle(json.props.style);
@@ -192,12 +200,14 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       case 'component':
         if (isReplace) {
           const compName = json.fileName;
-          xml = `<${compName}/>`;
+          xml = `<${compName} />`;
           // 当前是 Page 模块
-          const  compPath = rootSchema.componentName == 'Page' ? './components': '..';
-          importMods.push({
-            _import: `import ${compName} from '${compPath}/${compName}';`,
-          });
+          const compPath = rootSchema.componentName == 'Page' ? './components' : '..';
+          if(compName){
+            importMods.push({
+              _import: `import ${compName} from '${compPath}/${compName}';`,
+            });
+          }
           delete style[className]
         } else if (json.children && json.children.length) {
           xml = `<div ${classString} ${props}>${json.children
@@ -222,21 +232,27 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         }
         break;
       default:
-        collectImports(json.componentName);
-        if (
-          json.children &&
-          json.children.length &&
-          Array.isArray(json.children)
-        ) {
-          xml = `<${componentName} ${classString} ${props}>${json.children
-            .map((node) => {
-              return generateRender(node, true);
-            })
-            .join('')}</${componentName}>`;
-        } else if (typeof json.children === 'string') {
-          xml = `<${componentName} ${classString} ${props} >${json.children}</${componentName}>`;
-        } else {
-          xml = `<${componentName} ${classString} ${props} />`;
+        if(componentName){
+          collectImports(componentName);
+          if (
+            json.children &&
+            json.children.length &&
+            Array.isArray(json.children)
+          ) {
+  
+            xml = `<${componentName} ${classString} ${props}>${json.children
+              .map((node) => {
+                return generateRender(node, true);
+              })
+              .join('')}</${componentName}>`;
+  
+          } else if (typeof json.children === 'string') {
+            xml = `<${componentName} ${classString} ${props} >${json.children}</${componentName}>`;
+          } else {
+            xml = `<${componentName} ${classString} ${props} />`;
+          }
+        }else{
+          xml = ''
         }
     }
 
@@ -265,6 +281,9 @@ export default function exportMod(schema, option):IPanelDisplay[] {
 
   // parse schema
   const transformHooks = (json) => {
+    if(typeof json == 'string'){
+      return json
+    }
     let result = '';
     const blockName = json.fileName || json.id;
     const type = json.componentName.toLowerCase();
@@ -344,6 +363,9 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   };
 
   const transformComponent = (json) => {
+    if(typeof json == 'string'){
+      return json
+    }
     let result: string = '';
     const type = json.componentName.toLowerCase();
 
