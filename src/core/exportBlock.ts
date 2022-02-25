@@ -112,7 +112,10 @@ export default function exportMod(schema, option):IPanelDisplay[] {
       return;
     }
 
-    const component = componentsMap[componentName] || {};
+    const component = componentsMap[componentName];
+    if(!component){
+      return
+    }
     const objSets = importsMap.get(component.packageName);
 
     if (!objSets) {
@@ -490,7 +493,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
 
       ${imports.join('\n')}
       ${importMods.join('\n')}
-      
+
       ${importStyles.map((i) => i).join('\n')}
       ${utils.join('\n')}
 

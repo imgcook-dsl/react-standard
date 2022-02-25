@@ -864,10 +864,10 @@ export const importString = (importsMap) => {
       if (componentName !== exportName && !pkg.subName) {
         exportName = `${exportName} as ${componentName}`;
       }
-      if (!pkg.dependence.destructuring) {
-        set1.add(exportName);
-      } else {
+      if (pkg.dependence && pkg.dependence.destructuring) {
         set2.add(exportName);
+      } else {
+        set1.add(exportName);
       }
     }
     const set1Str = [...set1].join(',');
