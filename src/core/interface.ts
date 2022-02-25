@@ -4,7 +4,7 @@ export interface IPanelDisplay {
   panelValue: string;
   panelType: string;
   folder?: string;
-  panelImports?: IImport[]
+  panelDependencies?: IDependence[]
 }
 
 export interface IImport {
@@ -12,6 +12,12 @@ export interface IImport {
   package: string;
   version: string;
 }
+
+export interface IDependence {
+  package: string;
+  version: string;
+}
+
 
 export interface IDslConfig {
   responseWidth: number;

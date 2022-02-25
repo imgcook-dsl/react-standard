@@ -90,7 +90,12 @@ export const isEmptyObj = (o) => {
   return false;
 };
 
-interface IComp { list?: { name: string; packageName: string; dependenceVersion: string; dependence: string }[] };
+interface IComp {
+  list?: {
+    name: string; packageName: string; dependenceVersion: string; dependence: string, exportName: string;
+    subName: string;
+  }[]
+};
 export const transComponentsMap = (compsMap: IComp = {}) => {
   if (!compsMap || !Array.isArray(compsMap.list)) {
     return [];
@@ -99,18 +104,25 @@ export const transComponentsMap = (compsMap: IComp = {}) => {
   return list.reduce((obj, comp) => {
     const componentName = comp.name;
     if (!obj[componentName]) {
-      try {
-        let dependence = JSON.parse(comp.dependence);
-        if (dependence) {
-          comp.packageName = dependence.package;
+      if (comp.dependence) {
+        try {
+          let dependence = typeof comp.dependence === 'string' ? JSON.parse(comp.dependence) : comp.dependence;
+          if (dependence) {
+            comp.packageName = dependence.package;
+          }
+          if (!comp.dependenceVersion) {
+            comp.dependenceVersion = '*';
+          }
+          comp.exportName = dependence.export_name;
+          comp.subName = dependence.sub_name;
+          if (/^\d/.test(comp.dependenceVersion)) {
+            comp.dependenceVersion = '^' + comp.dependenceVersion;
+          }
+        } catch (e) {
+          console.log(e);
         }
-        if (!comp.dependenceVersion) {
-          comp.dependenceVersion = '*';
-        }
-        if (/^\d/.test(comp.dependenceVersion)) {
-          comp.dependenceVersion = '^' + comp.dependenceVersion;
-        }
-      } catch (e) { }
+      }
+
       obj[componentName] = comp;
     }
     return obj;
@@ -217,7 +229,7 @@ export const simpleStyle = (schema) => {
 
   // 删除 font-weight 400 或者 normal
   traverse(schema, (node) => {
-    const removeStyle = (node, styleName, values)=>{
+    const removeStyle = (node, styleName, values) => {
       const fw = get(node, `props.style.${styleName}`);
       if (values.includes(String(fw) || '')) {
         unset(node, `props.style.${styleName}`);
@@ -230,7 +242,7 @@ export const simpleStyle = (schema) => {
 
 
   traverseBrother(schema, function (nodes) {
-    const sameStyle = getMaxSameStyles(nodes.filter(item=> item.props && item.props.style).map(item => item.props.style));
+    const sameStyle = getMaxSameStyles(nodes.filter(item => item.props && item.props.style).map(item => item.props.style));
     if (Object.keys(sameStyle).length > 3) {
       const commonClassName = genStyleClass(
         nodes[0].props.className + '_common',
@@ -286,6 +298,12 @@ export const initSchema = (schema) => {
         break;
       default:
         break;
+    }
+  });
+
+  traverse(schema, (json) => {
+    if(json.componentName == 'Text'){
+      delete json.props.lines
     }
   });
 };
@@ -517,9 +535,9 @@ export const generateCSS = (style, prefix) => {
 （5）css3中新增属性：content   box-shadow   border-radius  transform……
  */
 const orderMap = [
-  "position", "display", "float", "left", "top", "right", "bottom", 
+  "position", "display", "float", "left", "top", "right", "bottom",
   "flex-direction", "justify-content", "align-items", "align-self", "overflow", "clear", "z-index",
-  "width", "height", "max-width", "max-height", "padding", "padding-bottom", "padding-left", "padding-right", "padding-left", "border", "margin", "margin-top", "margin-bottom", "margin-left", "margin-right", "background", 
+  "width", "height", "max-width", "max-height", "padding", "padding-bottom", "padding-left", "padding-right", "padding-left", "border", "margin", "margin-top", "margin-bottom", "margin-left", "margin-right", "background",
   "background-color", "background-image", "background-size",
   "font-family", "font-size", "font-style", "font-weight", "font-varient", "line-height", "color", "text-align", "vertical-align", "text-wrap", "text-transform", "text-indent", "text-decoration",
   "letter-spacing", "word-spacing", "white-space", "text-overflow",
@@ -531,8 +549,8 @@ export const generateCssString = (style) => {
   let array: any[] = [];
 
   // 缩写margin
-  const margin = Object.keys(style).filter(item=>item.startsWith("margin"));
-  if(!style['margin'] &&margin.length >2){
+  const margin = Object.keys(style).filter(item => item.startsWith("margin"));
+  if (!style['margin'] && margin.length > 2) {
     style["margin"] = `${style["marginTop"] || 0} ${style["marginRight"] || 0} ${style["marginBottom"] || 0} ${style["marginLeft"] || 0}`
     delete style["marginTop"];
     delete style["marginLeft"];
@@ -540,9 +558,9 @@ export const generateCssString = (style) => {
     delete style["marginRight"];
   }
 
-    // 缩写 padding
-  const padding = Object.keys(style).filter(item=>item.startsWith("padding"));
-  if(!style['padding'] && padding.length >2){
+  // 缩写 padding
+  const padding = Object.keys(style).filter(item => item.startsWith("padding"));
+  if (!style['padding'] && padding.length > 2) {
     style["padding"] = `${style["paddingTop"] || 0} ${style["paddingRight"] || 0} ${style["paddingBottom"] || 0} ${style["paddingLeft"] || 0}`
     delete style["paddingTop"];
     delete style["paddingLeft"];
@@ -720,39 +738,12 @@ export const existImport = (imports, singleImport) => {
 };
 
 // parse async dataSource
-export const parseDataSource = (data, imports: IImport[] = []) => {
+export const parseDataSource = (data) => {
   const name = data.id;
   const { uri, method, params } = data.options;
   const action = data.type;
   let payload = {};
-  let singleImport;
 
-  switch (action) {
-    case 'fetch':
-      singleImport = `import {fetch} from 'whatwg-fetch';`;
-      if (!existImport(imports, singleImport)) {
-        imports.push({
-          _import: singleImport,
-          package: 'whatwg-fetch',
-          version: '^3.0.0',
-        });
-      }
-      payload = {
-        method: method,
-      };
-
-      break;
-    case 'jsonp':
-      singleImport = `import {fetchJsonp} from 'fetch-jsonp';`;
-      if (!existImport(imports, singleImport)) {
-        imports.push({
-          _import: singleImport,
-          package: 'fetch-jsonp',
-          version: '^1.1.3',
-        });
-      }
-      break;
-  }
 
   Object.keys(data.options).forEach((key) => {
     if (['uri', 'method', 'params'].indexOf(key) === -1) {
@@ -793,8 +784,7 @@ export const parseDataSource = (data, imports: IImport[] = []) => {
   return {
     value: `${name}() ${result}`,
     functionName: name,
-    functionBody: result,
-    imports,
+    functionBody: result
   };
 };
 
@@ -850,3 +840,43 @@ export const addAnimation = function (schema) {
   })
   return animationRes;
 };
+
+
+/**
+ * constrcut the import string
+ */
+export const importString = (importsMap) => {
+  const importStrings: string[] = [];
+  const subImports: string[] = [];
+  for (const [packageName, pkgSet] of importsMap) {
+    const set1 = new Set(), set2 = new Set();
+    for (const pkg of pkgSet) {
+      let exportName = pkg.exportName;
+      let subName = pkg.subName;
+      let componentName = pkg.name;
+
+      if (pkg.subName) {
+        subImports.push(`const ${componentName} = ${exportName}.${subName};`);
+      }
+      if (!exportName) {
+        exportName = componentName
+      }
+      if (componentName !== exportName && !pkg.subName) {
+        exportName = `${exportName} as ${componentName}`;
+      }
+      if (!pkg.dependence.destructuring) {
+        set1.add(exportName);
+      } else {
+        set2.add(exportName);
+      }
+    }
+    const set1Str = [...set1].join(',');
+    let set2Str = [...set2].join(',');
+    const dot = set1Str && set2Str ? ',' : '';
+    if (set2Str) {
+      set2Str = `{${set2Str}}`;
+    }
+    importStrings.push(`import ${set1Str} ${dot} ${set2Str} from '${packageName}'`);
+  }
+  return importStrings.concat(subImports);
+}
