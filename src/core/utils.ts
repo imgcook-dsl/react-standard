@@ -165,6 +165,55 @@ export const resetCounter = (key) => {
   counter[key] = 0;
 }
 
+
+// 是否所有样式相同
+function isAllEqual(array) {
+  if (array.length > 0) {
+    return !array.some(function (value, index) {
+      return value !== array[0];
+    });
+  } else {
+    return true;
+  }
+}
+
+// 获得相同样式
+function getMaxSameStyles(array) {
+  if (array.length < 2) {
+    return {}
+  }
+  let maxStyle = {}
+  const keys = Object.keys(array[0])
+  for (let key of keys) {
+    if (isAllEqual(array.map(item => item[key]))) {
+      maxStyle[key] = array[0][key]
+    }
+  }
+
+  return maxStyle
+}
+
+export const commonStyle = (schema) => {
+  traverseBrother(schema, function (nodes) {
+    const sameStyle = getMaxSameStyles(nodes.filter(item => item.props && item.props.style).map(item => item.props.style));
+    if (Object.keys(sameStyle).length > 3) {
+      const commonClassName = genStyleClass(
+        'common_'+nodes[0].props.className,
+        DSL_CONFIG.cssStyle
+      );
+
+      set(schema, `commonStyles.${commonClassName}`, parseStyle(sameStyle))
+      for (let node of nodes) {
+        for (let key of Object.keys(sameStyle)) {
+          unset(node, `props.style.${key}`)
+        }
+        node.classnames = node.classnames || []
+        node.classnames.push(commonClassName)
+      }
+    }
+  })
+}
+
 // 精简样式
 export const simpleStyle = (schema) => {
 
@@ -180,31 +229,6 @@ export const simpleStyle = (schema) => {
       }
     }
     return maxele;
-  }
-  function isAllEqual(array) {
-    if (array.length > 0) {
-      return !array.some(function (value, index) {
-        return value !== array[0];
-      });
-    } else {
-      return true;
-    }
-  }
-
-  function getMaxSameStyles(array) {
-    if (array.length < 2) {
-      return {}
-    }
-    let maxStyle = {}
-    const keys = Object.keys(array[0])
-    // JSON.parse(JSON.stringify(array[0]));
-    for (let key of keys) {
-      if (isAllEqual(array.map(item => item[key]))) {
-        maxStyle[key] = array[0][key]
-      }
-    }
-
-    return maxStyle
   }
 
   // 统计出现字体最多的，放到根节点
@@ -240,25 +264,8 @@ export const simpleStyle = (schema) => {
   });
 
 
-
-  traverseBrother(schema, function (nodes) {
-    const sameStyle = getMaxSameStyles(nodes.filter(item => item.props && item.props.style).map(item => item.props.style));
-    if (Object.keys(sameStyle).length > 3) {
-      const commonClassName = genStyleClass(
-        nodes[0].props.className + '_common',
-        DSL_CONFIG.cssStyle
-      );
-
-      set(schema, `commonStyles.${commonClassName}`, parseStyle(sameStyle))
-      for (let node of nodes) {
-        for (let key of Object.keys(sameStyle)) {
-          unset(node, `props.style.${key}`)
-        }
-        node.classnames = [commonClassName]
-      }
-    }
-  })
-
+  
+  return schema;
 }
 
 /**
@@ -281,7 +288,15 @@ export const initSchema = (schema) => {
     node.componentName = node.componentName || 'div'
   });
 
-  simpleStyle(schema)
+  // 样式名处理：指定命名风格
+  traverse(schema, (json) => {
+    if (json.props && json.props.className) {
+      json.props.className = genStyleClass(
+        json.props.className,
+        DSL_CONFIG.cssStyle
+      );
+    }
+  });
 
   // 关键节点命名兜底
   traverse(schema, (json) => {

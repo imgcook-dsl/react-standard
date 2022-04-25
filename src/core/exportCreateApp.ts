@@ -16,40 +16,52 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
   const panelDisplay: IPanelDisplay[] = [];
 
   panelValue = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
-  </head>
-  <body>
-    <div id="container" style="padding: 24px" />
-    <script>var mountNode = document.getElementById('container');</script>
-  </body>
-</html>`
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="theme-color" content="#000000" />
+      <meta
+        name="description"
+        content="Web site created using create-react-app"
+      />
+      <title>React App</title>
+    </head>
+    <body>
+      <div id="root"></div>
+    </body>
+  </html>
+  `
   panelDisplay.push({
     panelName: `index.html`,
     panelType: 'html',
     panelValue,
-    folder: option.folder || '',
+    folder: 'public',
   });
 
   // index.js
   const isGlobal = schema.css && dslConfig.globalCss && dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS;
   panelValue = `'use strict';
   import React from 'react';
-  import ReactDOM from 'react-dom';
+  import ReactDOM from 'react-dom/client';
   ${isGlobal ? " import './global.css';" : ''}
   import './index.css';
-  import App from './${folderName}';
+  import App from './App';
   
-  ReactDOM.render(<App />, document.getElementById('container'));
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+  
   `
   panelDisplay.push({
     panelName: `index.${ dslConfig.useTypescript?'tsx': 'jsx'}`,
     panelType:  dslConfig.useTypescript?'tsx': 'jsx',
     panelValue:  prettier.format(panelValue, prettierJsOpt),
-    folder: option.folder || '',
+    folder: 'src',
   });
 
   // index.css
@@ -58,7 +70,7 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
     panelName: `index.css`,
     panelType: 'css',
     panelValue:  prettier.format(panelValue, prettierCssOpt),
-    folder: option.folder || '',
+    folder: 'src',
   });
 
 
@@ -77,19 +89,19 @@ export default function exportCreateApp(schema, option): IPanelDisplay[] {
   const packageJson = {
     "title": "imgcook demo",
     "scripts": {
-      "test": "react-scripts test --env=jsdom",
       "start": "react-scripts start",
-      "eject": "react-scripts eject",
-      "build": "react-scripts build"
+      "build": "react-scripts build",
+      "test": "react-scripts test",
+      "eject": "react-scripts eject"
     },
     "main": "index.js",
     "devDependencies": {
       "typescript": "^4.0.5"
     },
     "dependencies": {
-      "react-scripts": "^4.0.0",
-      "react-dom": "^16.14.0",
-      "react": "^16.14.0",
+      "react": "^18.0.0",
+      "react-dom": "^18.0.0",
+      "react-scripts": "5.0.1",
       ...packDependencies
     },
     "browserslist": [

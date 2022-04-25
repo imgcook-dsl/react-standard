@@ -6,6 +6,7 @@ export default function exportGlobalCss(schema, option): IPanelDisplay[]  {
     prettier,
     dslConfig,
     _,
+    folder = ''
   } = option;
 
   // 只有一个模块时，生成到当前模块
@@ -15,7 +16,7 @@ export default function exportGlobalCss(schema, option): IPanelDisplay[]  {
         panelName: `global.css`,
         panelValue: prettier.format(schema.css || '', prettierCssOpt),
         panelType: 'css',
-        // folder: './',
+        folder: folder,
       },
     ];
   } else {

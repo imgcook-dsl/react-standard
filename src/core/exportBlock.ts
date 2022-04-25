@@ -18,7 +18,7 @@ import {
   addAnimation,
 } from './utils';
 
-import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt, prettierLessOpt, prettierScssOpt } from './consts';
+import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt, prettierLessOpt, prettierScssOpt, DSL_CONFIG } from './consts';
 
 
 export default function exportMod(schema, option):IPanelDisplay[] {
@@ -44,11 +44,17 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   let filePathName = 'index';
   if(schema.componentName == 'Page'){
     // 单页面
-    if(pagesCount == 1){
-      folderName = '';
-    }else{
-      folderName = 'pages/' + schema.fileName;
+    // if(pagesCount == 1){
+    //   folderName = '';
+    // }else{
+    //   folderName = 'pages/' + schema.fileName;
+    // }
+    // folderName = 'pages/' + schema.fileName;
+    folderName = '';
+    if(dslConfig.outputStyle ==  OUTPUT_TYPE.PROJECT){
+      filePathName = 'App';
     }
+    
     // filePathName = schema.fileName
   }else{
     folderName = pagesCount == 0 && blocksCount == 1 && dslConfig.outputStyle !== OUTPUT_TYPE.PROJECT? '' : ('components/' + schema.fileName);
@@ -184,11 +190,6 @@ export default function exportMod(schema, option):IPanelDisplay[] {
         props += ` ${key}={${parseProps(json.props[key])}}`;
       }
 
-      if (key === 'codeStyle') {
-        if (json.props[key] && JSON.stringify(json.props[key]) !== '{}') {
-          props += ` style={${parseProps(json.props[key])}}`;
-        }
-      }
     });
 
     switch (type) {
@@ -534,23 +535,23 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   // 非内联模式 才引入 index.module.css
   if (dslConfig.inlineStyle !== CSS_TYPE.INLINE_CSS) {
 
-    let cssPanelValue = ''
+    let cssPanelValue = generateCSS(schema.commonStyles, '')
     switch (dslConfig.cssType) {
       case 'less':
         cssPanelValue = prettier.format(
-          `${generateScss(schema)} ${animationKeyframes}`,
+          `${cssPanelValue}${generateScss(schema)} ${animationKeyframes}`,
           prettierLessOpt
         );
         break;
       case 'scss':
         cssPanelValue = prettier.format(
-          `${generateScss(schema)} ${animationKeyframes}`,
+          `${cssPanelValue}${generateScss(schema)} ${animationKeyframes}`,
           prettierScssOpt
         );
         break;
       default:
         cssPanelValue = prettier.format(
-          `${generateCSS(style, prefix)} ${animationKeyframes}`,
+          `${cssPanelValue}${generateCSS(style, prefix)} ${animationKeyframes}`,
           prettierCssOpt
         )
     }

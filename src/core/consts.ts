@@ -69,3 +69,55 @@ export const initConfig = (cfg)=>{
   DSL_CONFIG = Object.assign(DSL_CONFIG, cfg)
 }
 
+
+
+
+export const defaultGlobalCss = `/**
+ * 全局样式 global.css
+ */
+.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+.justify-start {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.justify-center {
+	display: flex;
+	justify-content: center;
+}
+
+.justify-end {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.justify-between {
+	display: flex;
+	justify-content: space-between;
+}
+
+.items-start {
+	display: flex;
+	align-items: flex-start;
+}
+
+.items-center {
+	display: flex;
+	align-items: center;
+}
+
+.items-end {
+	display: flex;
+	align-items: flex-end;
+}
+
+`
