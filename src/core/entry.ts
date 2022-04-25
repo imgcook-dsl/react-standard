@@ -59,7 +59,11 @@ module.exports = function (schema, option) {
   // clear schema
   initSchema(schema);
 
-
+  const isProject = dslConfig.outputStyle == OUTPUT_TYPE.PROJECT;
+  if(isProject){
+    // 导出完整项目时，使根节点为Page
+    schema.componentName = 'Page';
+  }
   // 记录所有blocks
   traverse(schema, (json) => {
     switch (json.componentName.toLowerCase()) {
@@ -164,7 +168,7 @@ module.exports = function (schema, option) {
   }
 
 
-  const isProject = dslConfig.outputStyle == OUTPUT_TYPE.PROJECT;
+
   if (isProject) {
     // 依赖 package.json
     const dependencies = {};
