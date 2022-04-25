@@ -127,13 +127,14 @@ module.exports = function (schema, option) {
      
 
       if (inlineStyle == CSS_TYPE.MODULE_CLASS) {
-        // classnames.push(genStyleCode('styles', className));
-
-        if (classnames.length) {
-          const nameStr = `${classnames.join(' ')} \$\{ ${genStyleCode('styles', className)}\}`;
-          classString = ` className={\`${nameStr.trim()}\`}`;
+        
+        classnames.push(className);
+        classnames = classnames.map(name=>genStyleCode('styles', name));
+        
+        if (classnames.length > 1) {
+          classString = ` className={\`${classnames.map(name=>`\$\{${name}\}`).join(' ').trim()}\`}`;
         } else {
-          classString = ` className={${genStyleCode('styles', className).trim()}}`;
+          classString = ` className={${classnames[0].trim()}}`;
         }
 
       } else {
