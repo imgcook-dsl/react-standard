@@ -108,6 +108,7 @@ module.exports = function (schema, option) {
   // 精简默认样式
   simpleStyle(schema)
 
+  
   // 提取全局样式，类名数组存于 json.classString , 剩余样式覆盖 style
   traverse(schema, (json) => {
     let classnames: string[] = json.classnames || [];
@@ -132,14 +133,15 @@ module.exports = function (schema, option) {
         } else if(classnames.length == 1) {
           classString = ` className={${classnames[0].trim()}}`;
         }
-    }else if(inlineStyle == CSS_TYPE.MODULE_STYLE){
-      classnames.push(className);
-      classnames = classnames.filter(name=>!name);
-      if(classnames.length >= 1){
-        classString = ` className="${classnames.join(' ')}"`;
-      }
+    }else if(inlineStyle == CSS_TYPE.IMPORT_CLASS){
+        classnames.push(className);
+        classnames = classnames.filter(name=>name!=='');
+        if (classnames.length >= 1) {
+          classString = ` className="${classnames.join(' ')}"`;
+        }
     }
 
+    console.log('classString', inlineStyle, classString)
     json.props.style = style;
     json.classString = classString;
   });
