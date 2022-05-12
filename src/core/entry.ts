@@ -141,7 +141,6 @@ module.exports = function (schema, option) {
         }
     }
 
-    console.log('classString', inlineStyle, classString)
     json.props.style = style;
     json.classString = classString;
   });
