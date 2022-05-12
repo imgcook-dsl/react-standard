@@ -485,6 +485,9 @@ export const parseFunction = (func) => {
   };
 };
 
+export const toJsString = (str)=>{
+  return typeof str === 'string' && str.includes("'") ? `\`${str}\`` : `'${str}'`
+}
 // parse layer props(static values or expression)
 export const parseProps = (value, isReactNode = false) => {
   if (typeof value === 'string') {
@@ -499,7 +502,7 @@ export const parseProps = (value, isReactNode = false) => {
     if (isReactNode) {
       return value;
     } else {
-      return `'${value}'`;
+      return `${toJsString(value)}`;
     }
   } else if (typeof value === 'function') {
     const { params, content } = parseFunction(value);
