@@ -16,7 +16,7 @@ const parserBabel= require('prettier/parser-babel');
 const parserCss =require('prettier/parser-postcss');
 const parserMarkDown=require('prettier/parser-markdown');
 
-const entry = require('../dist/entry')
+const entry = require('../src/index')
 const browerParser = {
   babel: parserBabel,
   json: parserBabel,
@@ -77,7 +77,7 @@ const runCode = (data, dslConfig) => {
 co(function*() {
   const panelDisplay = runCode(data, {
     componentStyle: "hooks",
-    cssUnit: "px",
+    cssUnit: "rpx",
     dsl: "rax",
     globalCss: true,
     htmlFontSize: "16",

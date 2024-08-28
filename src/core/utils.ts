@@ -406,6 +406,7 @@ export const parseNumberValue = (value) => {
       return 0;
     }
   });
+
   if (/^\-?[\d\.]+$/.test(value)) {
     value = parseFloat(value);
     if (cssUnit == 'rpx') {
@@ -454,10 +455,14 @@ export const parseStyle = (style) => {
       case 'borderTopRightRadius':
       case 'borderTopLeftRadius':
       case 'borderRadius':
-        resultStyle[key] = parseInt(style[key]) * scale;
+        const values = String(style[key]).split(' ');
+
+        // 响应式缩放后数字
+        const scaleValues = values.map(val => parseInt(val, 10) * scale);
         if (style[key]) {
-          resultStyle[key] = parseNumberValue(style[key]);
+          resultStyle[key] = scaleValues.map(val=> parseNumberValue(val)).join(' ')
         }
+
         break;
       default:
         if (style[key] && String(style[key]).includes('px')) {
