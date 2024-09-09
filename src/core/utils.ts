@@ -455,12 +455,15 @@ export const parseStyle = (style) => {
       case 'borderTopRightRadius':
       case 'borderTopLeftRadius':
       case 'borderRadius':
-        const values = String(style[key]).split(' ');
 
-        // 响应式缩放后数字
-        const scaleValues = values.map(val => parseInt(val, 10) * scale);
         if (style[key]) {
-          resultStyle[key] = scaleValues.map(val=> parseNumberValue(val)).join(' ')
+          const values = String(style[key]).split(' ');
+          resultStyle[key] = values.map(val => {
+            if(String(val).endsWith('%')){
+              return val
+            }
+            return parseNumberValue(parseInt(val, 10) * scale)
+          }).join(' ')
         }
 
         break;
