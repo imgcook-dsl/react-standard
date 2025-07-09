@@ -499,6 +499,9 @@ export const toJsString = (str)=>{
 }
 // parse layer props(static values or expression)
 export const parseProps = (value, isReactNode = false) => {
+  if(Array.isArray(value)){
+    return `[${value.map(item => parseProps(item, isReactNode)).join(',')}]`
+  }
   if (typeof value === 'string') {
     if (isExpression(value)) {
       if (isReactNode) {
@@ -517,7 +520,14 @@ export const parseProps = (value, isReactNode = false) => {
     const { params, content } = parseFunction(value);
     return `(${params}) => {${content}}`;
   } else if (typeof value === 'object') {
-    return `${JSON.stringify(value)}`;
+    if(isJSSlot(value)){
+      if(value.params){
+        return `(${value.params.join(',')}) => { return ${value.jsx}}`
+      }
+      return value.jsx
+    }else{
+      return `{${  Object.keys(value).map(key => `${key}: ${parseProps(value[key])}`).join(',')}}`
+    }
   } else {
     return value;
   }
@@ -907,3 +917,18 @@ export const importString = (importsMap) => {
   }
   return importStrings.concat(subImports);
 }
+
+export const isObject = (value: any): value is Record<string, unknown> => {
+  return typeof value == 'object' && Array.isArray(value) === false
+}
+
+
+export const isJSSlot = (value: unknown): boolean => {
+  return isObject(value) && value?.type === 'JSSlot'
+}
+
+
+const isRecord = (data: unknown): data is Record<string, unknown> => {
+  return typeof data === 'object' && data !== null;
+};
+

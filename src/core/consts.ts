@@ -55,7 +55,7 @@ export const OUTPUT_TYPE = {
 export let DSL_CONFIG: IDslConfig = {
   responseWidth: 750,
   scale: 1,
-  globalCss: true,
+  globalCss: false,
   cssUnit: 'px',
   componentStyle: 'hooks',
   inlineStyle: 'module',

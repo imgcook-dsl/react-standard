@@ -16,6 +16,9 @@ import {
   parseDataSource,
   line2Hump,
   addAnimation,
+  traverse,
+  isObject,
+  isJSSlot,
 } from './utils';
 
 import { CSS_TYPE, OUTPUT_TYPE, prettierJsOpt, prettierCssOpt, prettierLessOpt, prettierScssOpt, DSL_CONFIG } from './consts';
@@ -289,6 +292,7 @@ export default function exportMod(schema, option):IPanelDisplay[] {
     return xml;
   };
 
+
   // parse schema
   const transformHooks = (json) => {
     if(typeof json == 'string'){
@@ -478,6 +482,30 @@ export default function exportMod(schema, option):IPanelDisplay[] {
   }
 
   // parse schema
+
+
+  traverse(schema, (node) => {
+    const traverseProps = (value: any) => {
+      console.log('traverseProps', value)
+      if (value === null) {
+        return null
+      }
+      if (Array.isArray(value)) {
+        return value.map(item => traverseProps(item))
+      }
+      if (!isObject(value)) return value
+      if (isJSSlot(value)) {
+         value.jsx = generateRender(value.value as unknown)
+      } else {
+        Object.keys(value).forEach(key => {
+          value[key] = traverseProps(value[key])
+        })
+      }
+      return value
+    }
+
+    traverseProps(node)
+  });
 
   // start parse schema
   transform(schema);
